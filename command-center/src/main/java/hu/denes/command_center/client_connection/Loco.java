@@ -71,6 +71,9 @@ public class Loco {
 		if (remoteLocos == null) {
 			return;
 		}
+		if(remoteLocos.contains(loco)){
+		    return;
+		}
 		if (loco == this) {
 			return;
 		}

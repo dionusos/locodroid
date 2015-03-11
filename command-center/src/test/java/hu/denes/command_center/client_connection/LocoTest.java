@@ -1,6 +1,6 @@
 package hu.denes.command_center.client_connection;
 
-import hu.denes.command_center.roco_connection.DummyConnection;
+import hu.denes.command_center.roco_connection.PrintoutConnection;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -16,7 +16,7 @@ public class LocoTest {
 	Loco loco;
 
 	@Mock
-	DummyConnection mockedConn;
+	PrintoutConnection mockedConn;
 
 	@Before
 	public void init() {
@@ -55,5 +55,13 @@ public class LocoTest {
 	public void testSelfCannotBeAddedAsRemote() {
 		loco.addRemoteLoco(loco);
 		Assert.assertFalse(loco.getRemoteLocos().contains(loco));
+	}
+	
+	@Test
+	public void testGivenLocoCannotBeAddedTwice() {
+	    	Loco newLoco = new Loco(5, mockedConn);
+		loco.addRemoteLoco(newLoco);
+		loco.addRemoteLoco(newLoco);
+		Assert.assertEquals(1, loco.getRemoteLocos().size());
 	}
 }
