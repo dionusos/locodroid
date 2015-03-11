@@ -1,6 +1,6 @@
 package hu.denes.command_center.roco_connection;
 
-public class DummyConnection implements Connection {
+public class PrintoutConnection implements Connection {
 
 	@Override
 	public void setSpeed(final int address, final int speed) {
