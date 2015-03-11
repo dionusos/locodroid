@@ -9,97 +9,101 @@ import java.util.List;
 import java.util.Map;
 
 public class Loco {
-	private final int address;
-	private String name;
-	private final DIRECTION direction;
-	private int speed;
-	private int maxSpeed;
-	private boolean lightsOn;
-	private Map<String, Functions.FUNCTION> functionMap;
-	private final List<Loco> remoteLocos;
-	private final Connection connection;
+    private final int address;
+    private String name;
+    private final DIRECTION direction;
+    private int speed;
+    private int maxSpeed;
+    private boolean lightsOn;
+    private Map<String, Functions.FUNCTION> functionMap;
+    private final List<Loco> remoteLocos;
+    private final Connection connection;
 
-	public Loco(final int address, final Connection connection) {
-		this.address = address;
-		this.connection = connection;
-		direction = DIRECTION.FORWARD;
-		remoteLocos = new ArrayList<Loco>();
-		maxSpeed = 128;
-		speed = 0;
-		lightsOn = false;
-	}
+    public Loco(final int address, final Connection connection) {
+	this.address = address;
+	this.connection = connection;
+	direction = DIRECTION.FORWARD;
+	remoteLocos = new ArrayList<Loco>();
+	maxSpeed = 128;
+	speed = 0;
+	lightsOn = false;
+    }
 
-	public void setMaxSpeed(final int maxSpeed) {
-		this.maxSpeed = maxSpeed;
-	}
+    public int getAddress(){
+	return address;
+    }
 
-	public int getMaxSpeed() {
-		return maxSpeed;
-	}
+    public void setMaxSpeed(final int maxSpeed) {
+	this.maxSpeed = maxSpeed;
+    }
 
-	public void turnLightsOn() {
-		lightsOn = true;
-		connection.turnLightsOn(address);
-	}
+    public int getMaxSpeed() {
+	return maxSpeed;
+    }
 
-	public void turnLightsOff() {
-		lightsOn = false;
-		connection.turnLightsOff(address);
-	}
+    public void turnLightsOn() {
+	lightsOn = true;
+	connection.turnLightsOn(address);
+    }
 
-	public void setSpeed(final int speed) {
-		if (speed > maxSpeed) {
-			this.speed = maxSpeed;
-		} else if (speed < 0) {
-			this.speed = 0;
-		} else {
-			this.speed = speed;
-		}
-		connection.setSpeed(address, this.speed);
-		setRemoteLocoSpeed(this.speed);
-	}
+    public void turnLightsOff() {
+	lightsOn = false;
+	connection.turnLightsOff(address);
+    }
 
-	public int getSpeed() {
-		return speed;
+    public void setSpeed(final int speed) {
+	if (speed > maxSpeed) {
+	    this.speed = maxSpeed;
+	} else if (speed < 0) {
+	    this.speed = 0;
+	} else {
+	    this.speed = speed;
 	}
+	connection.setSpeed(address, this.speed);
+	setRemoteLocoSpeed(this.speed);
+    }
 
-	public List<Loco> getRemoteLocos() {
-		return remoteLocos;
-	}
+    public int getSpeed() {
+	return speed;
+    }
 
-	public void addRemoteLoco(final Loco loco) {
-		if (remoteLocos == null) {
-			return;
-		}
-		if(remoteLocos.contains(loco)){
-		    return;
-		}
-		if (loco == this) {
-			return;
-		}
-		remoteLocos.add(loco);
-	}
+    public List<Loco> getRemoteLocos() {
+	return remoteLocos;
+    }
 
-	public void removeRemoteLoco(final Loco loco) {
-		if (remoteLocos == null) {
-			return;
-		}
-		remoteLocos.remove(loco);
+    public void addRemoteLoco(final Loco loco) {
+	if (remoteLocos == null) {
+	    return;
 	}
+	if(remoteLocos.contains(loco)){
+	    return;
+	}
+	if (loco == this) {
+	    return;
+	}
+	remoteLocos.add(loco);
+    }
 
-	public void removeAllRemoteLocos() {
-		if (remoteLocos == null) {
-			return;
-		}
-		remoteLocos.clear();
+    public void removeRemoteLoco(final Loco loco) {
+	if (remoteLocos == null) {
+	    return;
 	}
+	remoteLocos.remove(loco);
+    }
 
-	private void setRemoteLocoSpeed(final int speed) {
-		if (remoteLocos == null) {
-			return;
-		}
-		for (final Loco loco : remoteLocos) {
-			loco.setSpeed(speed);
-		}
+    public void removeAllRemoteLocos() {
+	if (remoteLocos == null) {
+	    return;
 	}
+	remoteLocos.clear();
+    }
+
+    private void setRemoteLocoSpeed(final int speed) {
+	if (remoteLocos == null) {
+	    return;
+	}
+	for (final Loco loco : remoteLocos) {
+	    loco.setSpeed(speed);
+	}
+    }
 }
