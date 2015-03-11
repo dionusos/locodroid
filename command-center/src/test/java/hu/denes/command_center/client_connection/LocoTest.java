@@ -1,8 +1,8 @@
 package hu.denes.command_center.client_connection;
 
 import hu.denes.command_center.roco_connection.PrintoutConnection;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
