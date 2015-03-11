@@ -18,7 +18,7 @@ public class PrintoutConnection implements RailwayConnection {
 	}
 
 	public void turnLightsOff(final int address) {
-		System.out.println("Lights turned on @ " + address);
+		System.out.println("Lights turned off @ " + address);
 
 	}
 
