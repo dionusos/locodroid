@@ -1,6 +1,7 @@
 package hu.denes.command_center.roco_connection;
 
-public interface Connection extends Functions {
+
+public interface RailwayConnection {
 	public enum DIRECTION {
 		FORWARD, BACKWARD
 	}
@@ -13,8 +14,8 @@ public interface Connection extends Functions {
 
 	public void turnLightsOff(int address);
 
-	public void turnFunctionOn(int address, FUNCTION function);
+	public void turnFunctionOn(int address, int function);
 
-	public void turnFunctionOff(int address, FUNCTION function);
+	public void turnFunctionOff(int address, int function);
 
 }

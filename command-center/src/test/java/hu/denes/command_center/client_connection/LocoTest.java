@@ -56,10 +56,10 @@ public class LocoTest {
 		loco.addRemoteLoco(loco);
 		Assert.assertFalse(loco.getRemoteLocos().contains(loco));
 	}
-	
+
 	@Test
 	public void testGivenLocoCannotBeAddedTwice() {
-	    	Loco newLoco = new Loco(5, mockedConn);
+		final Loco newLoco = new Loco(5, mockedConn);
 		loco.addRemoteLoco(newLoco);
 		loco.addRemoteLoco(newLoco);
 		Assert.assertEquals(1, loco.getRemoteLocos().size());
