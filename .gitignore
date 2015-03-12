@@ -1,3 +1,5 @@
 command-center/target/*
 command-center/.settings
 command-center/.classpath
+LocoDroid/.settings
+LocoDroid/.classpath
