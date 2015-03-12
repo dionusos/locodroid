@@ -1,12 +1,15 @@
 package hu.denes.command_center.client_connection;
 
 import hu.denes.command_center.roco_connection.RailwayConnection;
+import hu.denes.command_center.roco_connection.RailwayConnection.DIRECTION;
 import hu.denes.command_center.storage.Storage;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONObject;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -40,24 +43,9 @@ public class NetworkConnection {
 			@Override
 			public void received(final Connection connection,
 					final Object object) {
-				// System.out.println("Package received!");
 				if (object instanceof String) {
 					final String request = (String) object;
-					// System.out.println(request + " arrived");
-					if (request.startsWith("lights on")) {
-						final Loco l = locoMap.get(Integer.parseInt(request
-								.split("#")[1]));
-						if (l != null) {
-							l.turnLightsOn();
-						}
-					} else if (request.startsWith("lights off")) {
-						final Loco l = locoMap.get(Integer.parseInt(request
-								.split("#")[1]));
-						if (l != null) {
-							l.turnLightsOff();
-						}
-					}
-
+					processJson(request);
 					final String response = "OK";
 					connection.sendTCP(response);
 				}
@@ -90,5 +78,42 @@ public class NetworkConnection {
 	public void stopServer() {
 		server.stop();
 
+	}
+
+	private void processJson(final String request) {
+		final JSONObject jo = new JSONObject(request);
+		switch (jo.getString("target")) {
+		case "loco":
+			processLoco(jo.getJSONObject("function"));
+			break;
+		}
+	}
+
+	private void processLoco(final JSONObject o) {
+		final String value = o.getString("value");
+		final Integer address = o.getInt("address");
+		switch (o.getString("type")) {
+		case "lights":
+			if ("on".equals(value)) {
+				locoMap.get(address).turnLightsOn();
+			} else if ("off".equals(value)) {
+				locoMap.get(address).turnLightsOff();
+			}
+			break;
+		case "speed":
+			locoMap.get(address).setSpeed(Integer.parseInt(value));
+			break;
+		case "direction":
+			locoMap.get(address).setDirection(
+					"forward".equals(value) ? DIRECTION.FORWARD
+							: DIRECTION.BACKWARD);
+			break;
+		case "function-on":
+			locoMap.get(address).activateFunction(value);
+			break;
+		case "function-off":
+			locoMap.get(address).deactivateFunction(value);
+			break;
+		}
 	}
 }
