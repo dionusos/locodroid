@@ -2,31 +2,67 @@ package hu.denes.command_center.client_connection;
 
 import hu.denes.command_center.roco_connection.RailwayConnection;
 import hu.denes.command_center.roco_connection.RailwayConnection.DIRECTION;
-import hu.denes.command_center.roco_connection.Functions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Loco {
 	private final int address;
 	private String name;
-	private final DIRECTION direction;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	private DIRECTION direction;
+
+	public DIRECTION getDirection() {
+		return direction;
+	}
+
+	public void setDirection(final DIRECTION dir) {
+		this.direction = dir;
+		connection.setDirection(address, dir);
+	}
+
 	private int speed;
 	private int maxSpeed;
-	private boolean lightsOn;
-	private Map<String, Functions.FUNCTION> functionMap;
+	private final Map<String, Integer> functionMap;
+	private final Set<String> activatedFunctions;
 	private final List<Loco> remoteLocos;
 	private final RailwayConnection connection;
+
+	public void activateFunction(final String func) {
+		connection.turnFunctionOn(address, functionMap.get(func));
+		activatedFunctions.add(func);
+	}
+
+	public void deactivateFunction(final String func) {
+		connection.turnFunctionOff(address, functionMap.get(func));
+		activatedFunctions.remove(func);
+	}
 
 	public Loco(final int address, final RailwayConnection connection) {
 		this.address = address;
 		this.connection = connection;
 		direction = DIRECTION.FORWARD;
 		remoteLocos = new ArrayList<Loco>();
+		functionMap = new HashMap<String, Integer>();
+		activatedFunctions = new HashSet<String>();
 		maxSpeed = 128;
 		speed = 0;
-		lightsOn = false;
+	}
+
+	public void addFunction(final String function, final Integer val) {
+		functionMap.put(function, val);
 	}
 
 	public int getAddress() {
@@ -42,12 +78,10 @@ public class Loco {
 	}
 
 	public void turnLightsOn() {
-		lightsOn = true;
 		connection.turnLightsOn(address);
 	}
 
 	public void turnLightsOff() {
-		lightsOn = false;
 		connection.turnLightsOff(address);
 	}
 
@@ -75,10 +109,10 @@ public class Loco {
 		if (remoteLocos == null) {
 			return;
 		}
-		if (remoteLocos.contains(loco)) {
+		if (loco == this) {
 			return;
 		}
-		if (loco == this) {
+		if (remoteLocos.contains(loco)) {
 			return;
 		}
 		remoteLocos.add(loco);
