@@ -12,12 +12,17 @@ import java.util.Scanner;
 
 public class CommandCenter {
 	public static void main(final String[] args) {
+		if (args.length < 2) {
+			return;
+		}
 		System.out.println("Welcome! Command Center!");
+		final int tcpPort = Integer.parseInt(args[0]);
+		final int udpPort = Integer.parseInt(args[1]);
 		final Storage storage = new Storage();
 		final RailwayConnection rc = new PrintoutConnection();
 		final NetworkConnection networkConnection = new NetworkConnection(
 				storage, rc);
-		networkConnection.startServer(54555, 54777);
+		networkConnection.startServer(tcpPort, udpPort);
 
 		final List<Loco> locos = new ArrayList<Loco>();
 		locos.add(new Loco(1, rc));
