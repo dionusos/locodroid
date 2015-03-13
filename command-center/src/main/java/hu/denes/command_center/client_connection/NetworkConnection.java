@@ -92,6 +92,9 @@ public class NetworkConnection {
 	private void processLoco(final JSONObject o) {
 		final String value = o.getString("value");
 		final Integer address = o.getInt("address");
+		if (!locoMap.containsKey(address)) {
+			return;
+		}
 		switch (o.getString("type")) {
 		case "lights":
 			if ("on".equals(value)) {
