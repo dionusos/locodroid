@@ -7,10 +7,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.esotericsoftware.kryonet.Client;
@@ -72,14 +70,6 @@ public class ControlCenterAdapter extends BaseAdapter {
 				(R.layout.found_command_center), null);
 		((TextView) foundCommandCenterView
 				.findViewById(R.id.hostAddressTextView)).setText(host);
-		((Button) foundCommandCenterView.findViewById(R.id.connectCenterButton))
-				.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(final View v) {
-
-			}
-				});
 
 		return foundCommandCenterView;
 	}

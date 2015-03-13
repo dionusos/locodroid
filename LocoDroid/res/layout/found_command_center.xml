@@ -12,10 +12,4 @@
         android:text="HostAddress"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <Button
-        android:id="@+id/connectCenterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Connect" />
-
 </LinearLayout>
