@@ -27,6 +27,7 @@ public class ControlCenterAdapter extends BaseAdapter {
 	}
 
 	public void refresh() {
+		hosts.clear();
 		for (final InetAddress a : client.discoverHosts(54777, 5000)) {
 			hosts.add(a.getHostAddress());
 		}
