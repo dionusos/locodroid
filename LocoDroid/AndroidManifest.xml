@@ -3,9 +3,10 @@
     package="hu.denes.locodroid"
     android:versionCode="1"
     android:versionName="1.0" >
-    
-    <uses-feature android:name="android.hardware.wifi"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-feature android:name="android.hardware.wifi" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-sdk
         android:minSdkVersion="19"
@@ -24,6 +25,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".TrainDriverActivity"
+            android:label="@string/title_activity_train_driver" >
         </activity>
     </application>
 

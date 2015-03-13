@@ -3,10 +3,14 @@ package hu.denes.locodroid;
 import java.net.InetAddress;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.esotericsoftware.kryonet.Client;
 
@@ -22,7 +26,7 @@ public class MainActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		// setContentView(R.layout.list_command_center);
 		final StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-		.permitAll().build();
+				.permitAll().build();
 
 		StrictMode.setThreadPolicy(policy);
 		client = new Client();
@@ -33,7 +37,7 @@ public class MainActivity extends ListActivity {
 
 	@Override
 	protected void onStart() {
-		client.start();
+
 		super.onStart();
 	}
 
@@ -51,7 +55,7 @@ public class MainActivity extends ListActivity {
 
 	@Override
 	protected void onResume() {
-
+		client.start();
 		super.onResume();
 	};
 
@@ -80,14 +84,42 @@ public class MainActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onPause() {
+	public boolean onContextItemSelected(final MenuItem item) {
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+				.getMenuInfo();
+		final int menuItemIndex = item.getItemId();
 
+		if (menuItemIndex == 0) {
+			final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
+					.getItem(info.position));
+			final Intent intent = new Intent(this, TrainDriverActivity.class);
+			intent.putExtra("hostAddress", hostAddress);
+			startActivity(intent);
+
+		}
+		return true;
+	}
+
+	@Override
+	protected void onListItemClick(final ListView l, final View v,
+			final int position, final long id) {
+		final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
+				.getItem(position));
+		final Intent intent = new Intent(this, TrainDriverActivity.class);
+		intent.putExtra("hostAddress", hostAddress);
+		startActivity(intent);
+		// super.onListItemClick(l, v, position, id);
+	}
+
+	@Override
+	protected void onPause() {
+		client.stop();
 		super.onPause();
 	}
 
 	@Override
 	protected void onStop() {
-		client.stop();
+
 		super.onStop();
 	}
 }
