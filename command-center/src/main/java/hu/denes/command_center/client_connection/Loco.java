@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Loco {
-	private final int address;
+	private final Integer address;
 	private String name;
 
 	public String getName() {
@@ -50,7 +50,7 @@ public class Loco {
 		activatedFunctions.remove(func);
 	}
 
-	public Loco(final int address, final RailwayConnection connection) {
+	public Loco(final Integer address, final RailwayConnection connection) {
 		this.address = address;
 		this.connection = connection;
 		direction = DIRECTION.FORWARD;
@@ -65,7 +65,7 @@ public class Loco {
 		functionMap.put(function, val);
 	}
 
-	public int getAddress() {
+	public Integer getAddress() {
 		return address;
 	}
 

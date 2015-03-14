@@ -26,6 +26,8 @@ public class CommandCenter {
 
 		final List<Loco> locos = new ArrayList<Loco>();
 		locos.add(new Loco(1, rc));
+		locos.add(new Loco(2, rc));
+		locos.add(new Loco(3, rc));
 		networkConnection.setLocos(locos);
 
 		final Scanner keyboard = new Scanner(System.in);

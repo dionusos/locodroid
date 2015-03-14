@@ -117,6 +117,14 @@ public class NetworkConnection {
 		case "function-off":
 			locoMap.get(address).deactivateFunction(value);
 			break;
+		case "add-loco-to-train":
+			locoMap.get(address).addRemoteLoco(
+					locoMap.get(Integer.parseInt(value)));
+			break;
+		case "remove-loco-from-train":
+			locoMap.get(address).removeRemoteLoco(
+					locoMap.get(Integer.parseInt(value)));
+			break;
 		}
 	}
 }
