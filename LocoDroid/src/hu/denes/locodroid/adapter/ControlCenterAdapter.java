@@ -1,4 +1,8 @@
-package hu.denes.locodroid;
+package hu.denes.locodroid.adapter;
+
+import hu.denes.locodroid.ClientSingleton;
+import hu.denes.locodroid.R;
+import hu.denes.locodroid.async.DiscoverControlCentersAsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +15,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.esotericsoftware.kryonet.Client;
-
 public class ControlCenterAdapter extends BaseAdapter {
 
 	private ArrayList<String> hosts;
-	private final Client client;
 
 	public void setHosts(final List<String> l) {
 		hosts.clear();
@@ -36,11 +37,10 @@ public class ControlCenterAdapter extends BaseAdapter {
 
 		final DiscoverControlCentersAsyncTask t = new DiscoverControlCentersAsyncTask(
 				this);
-		t.execute((Object) client);
+		t.execute((Object) ClientSingleton.getInstance().getClient());
 	}
 
-	public ControlCenterAdapter(final Client client) {
-		this.client = client;
+	public ControlCenterAdapter() {
 		hosts = new ArrayList<String>();
 		// refresh();
 	}

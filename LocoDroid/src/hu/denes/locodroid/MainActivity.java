@@ -1,22 +1,20 @@
 package hu.denes.locodroid;
 
+import hu.denes.locodroid.adapter.ControlCenterAdapter;
+
 import java.net.InetAddress;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.esotericsoftware.kryonet.Client;
-
 public class MainActivity extends ListActivity {
 
-	Client client;
 	InetAddress commandCenterAddress;
 	int currentLocoAddress = 0;
 	ControlCenterAdapter adapter;
@@ -25,14 +23,17 @@ public class MainActivity extends ListActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// setContentView(R.layout.list_command_center);
-		final StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-				.permitAll().build();
+		// final StrictMode.ThreadPolicy policy = new
+		// StrictMode.ThreadPolicy.Builder().permitAll().build();
 
-		StrictMode.setThreadPolicy(policy);
-		client = new Client();
-		adapter = new ControlCenterAdapter(client);
+		// StrictMode.setThreadPolicy(policy);
+
+		ClientSingleton.getInstance().getClient().start();
+
+		adapter = new ControlCenterAdapter();
 		setListAdapter(adapter);
 		registerForContextMenu(getListView());
+
 	}
 
 	@Override
@@ -55,7 +56,7 @@ public class MainActivity extends ListActivity {
 
 	@Override
 	protected void onResume() {
-		client.start();
+
 		super.onResume();
 	};
 
@@ -92,7 +93,7 @@ public class MainActivity extends ListActivity {
 		if (menuItemIndex == 0) {
 			final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
 					.getItem(info.position));
-			final Intent intent = new Intent(this, TrainDriverActivity.class);
+			final Intent intent = new Intent(this, LocoListActivity.class);
 			intent.putExtra("hostAddress", hostAddress);
 			startActivity(intent);
 
@@ -105,7 +106,7 @@ public class MainActivity extends ListActivity {
 			final int position, final long id) {
 		final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
 				.getItem(position));
-		final Intent intent = new Intent(this, TrainDriverActivity.class);
+		final Intent intent = new Intent(this, LocoListActivity.class);
 		intent.putExtra("hostAddress", hostAddress);
 		startActivity(intent);
 		// super.onListItemClick(l, v, position, id);
@@ -113,7 +114,6 @@ public class MainActivity extends ListActivity {
 
 	@Override
 	protected void onPause() {
-		client.stop();
 		super.onPause();
 	}
 

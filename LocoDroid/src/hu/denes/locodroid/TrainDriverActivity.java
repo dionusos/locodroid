@@ -1,8 +1,6 @@
 package hu.denes.locodroid;
 
-import java.io.IOException;
-import java.net.InetAddress;
-
+import hu.denes.locodroid.async.TrainDriverCommandAsyncTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,21 +14,17 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import android.widget.ToggleButton;
-
-import com.esotericsoftware.kryonet.Client;
 
 public class TrainDriverActivity extends Activity {
 
-	String hostAddress;
-	Client client;
+	private String hostAddress;
+	private Integer locoAddress;
+	private String locoName;
 
 	private int getLocoAddress() {
-		final EditText et = (EditText) findViewById(R.id.locoAddresssEditText);
-		if ("".equals(et.getText().toString())) {
-			return 0;
-		}
-		return Integer.parseInt(et.getText().toString());
+		return locoAddress;
 	}
 
 	private int getOtherLocoAddress() {
@@ -47,8 +41,11 @@ public class TrainDriverActivity extends Activity {
 		setContentView(R.layout.activity_train_driver);
 		final Intent intent = getIntent();
 		hostAddress = intent.getStringExtra("hostAddress");
-		client = new Client();
-		client.start();
+		locoAddress = intent.getIntExtra("locoAddress", 0);
+		locoName = intent.getStringExtra("locoName");
+
+		final TextView tv = (TextView) findViewById(R.id.locoAddressTextView);
+		tv.setText(locoName + "@" + locoAddress);
 		final ToggleButton lightButton = (ToggleButton) findViewById(R.id.lightToggleButton);
 		lightButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -136,13 +133,11 @@ public class TrainDriverActivity extends Activity {
 	@Override
 	protected void onStart() {
 
-		client.start();
 		super.onStart();
 	}
 
 	@Override
 	protected void onStop() {
-		client.stop();
 		super.onStop();
 	}
 
@@ -166,12 +161,8 @@ public class TrainDriverActivity extends Activity {
 	}
 
 	private void sendCommand(final String request) {
-		try {
-			client.connect(5000, InetAddress.getByName(hostAddress), 54555,
-					54777);
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		client.sendTCP(request);
+
+		new TrainDriverCommandAsyncTask().execute(request, hostAddress);
+
 	}
 }

@@ -1,14 +1,15 @@
-package hu.denes.locodroid;
+package hu.denes.locodroid.async;
+
+import hu.denes.locodroid.ClientSingleton;
+import hu.denes.locodroid.adapter.ControlCenterAdapter;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
 
 import android.os.AsyncTask;
 
-import com.esotericsoftware.kryonet.Client;
-
 public class DiscoverControlCentersAsyncTask extends
-AsyncTask<Object, Integer, ArrayList<String>> {
+		AsyncTask<Object, Integer, ArrayList<String>> {
 
 	private final ControlCenterAdapter adapter;
 
@@ -20,8 +21,8 @@ AsyncTask<Object, Integer, ArrayList<String>> {
 	@Override
 	protected ArrayList<String> doInBackground(final Object... params) {
 		final ArrayList<String> hosts = new ArrayList<String>();
-		for (final InetAddress a : (((Client) (params[0])).discoverHosts(54777,
-				5000))) {
+		for (final InetAddress a : (ClientSingleton.getInstance().getClient()
+				.discoverHosts(54777, 5000))) {
 			hosts.add(a.getHostAddress());
 		}
 		return hosts;
