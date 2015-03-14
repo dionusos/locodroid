@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -24,6 +27,17 @@ public class TrainDriverActivity extends Activity {
 
 	private int getLocoAddress() {
 		final EditText et = (EditText) findViewById(R.id.locoAddresssEditText);
+		if ("".equals(et.getText().toString())) {
+			return 0;
+		}
+		return Integer.parseInt(et.getText().toString());
+	}
+
+	private int getOtherLocoAddress() {
+		final EditText et = (EditText) findViewById(R.id.otherLocoAddressEditText);
+		if ("".equals(et.getText().toString())) {
+			return 0;
+		}
 		return Integer.parseInt(et.getText().toString());
 	}
 
@@ -41,26 +55,22 @@ public class TrainDriverActivity extends Activity {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView,
 					final boolean isChecked) {
-				try {
-					client.connect(5000, InetAddress.getByName(hostAddress),
-							54555, 54777);
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
 
+				String request = "";
 				if (isChecked) {
-					final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+					request = "{\"target\": \"loco\",\"function\": {\"address\": "
 							+ getLocoAddress()
 							+ ",	\"type\": \"lights\", \"value\": \"on\"} }";
-					client.sendTCP(request);
 				} else {
-					final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+					request = "{\"target\": \"loco\",\"function\": {\"address\": "
 							+ getLocoAddress()
 							+ ",	\"type\": \"lights\", \"value\": \"off\"}}";
-					client.sendTCP(request);
+
 				}
+				sendCommand(request);
 
 			}
+
 		});
 
 		final SeekBar speedSeekBar = (SeekBar) findViewById(R.id.speedSeekBar);
@@ -83,19 +93,41 @@ public class TrainDriverActivity extends Activity {
 			@Override
 			public void onProgressChanged(final SeekBar seekBar,
 					final int progress, final boolean fromUser) {
-				try {
-					client.connect(5000, InetAddress.getByName(hostAddress),
-							54555, 54777);
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
 
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
 						+ getLocoAddress()
 						+ ",	\"type\": \"speed\", \"value\": \""
 						+ progress
 						+ "\"} }";
-				client.sendTCP(request);
+				sendCommand(request);
+
+			}
+		});
+
+		final Button addRemoteLoco = (Button) findViewById(R.id.addRemoteLocoButton);
+		addRemoteLoco.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(final View v) {
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"add-loco-to-train\", \"value\": \""
+						+ getOtherLocoAddress() + "\"} }";
+				sendCommand(request);
+
+			}
+		});
+
+		final Button removeRemoteLoco = (Button) findViewById(R.id.removeRemoteLocoButton);
+		removeRemoteLoco.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(final View v) {
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"remove-loco-from-train\", \"value\": \""
+						+ getOtherLocoAddress() + "\"} }";
+				sendCommand(request);
 
 			}
 		});
@@ -131,5 +163,15 @@ public class TrainDriverActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void sendCommand(final String request) {
+		try {
+			client.connect(5000, InetAddress.getByName(hostAddress), 54555,
+					54777);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		client.sendTCP(request);
 	}
 }

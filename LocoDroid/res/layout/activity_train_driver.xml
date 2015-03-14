@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:ems="10"
+        android:ems="4"
         android:inputType="number" >
 
         <requestFocus />
@@ -34,5 +34,40 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/editText1"
         android:layout_below="@+id/lightToggleButton" />
+
+    <TextView
+        android:id="@+id/otherLocoAddressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/speedSeekBar"
+        android:layout_below="@+id/speedSeekBar"
+        android:layout_marginTop="32dp"
+        android:text="Other loco address" />
+
+    <EditText
+        android:id="@+id/otherLocoAddressEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/otherLocoAddressTextView"
+        android:layout_alignBottom="@+id/otherLocoAddressTextView"
+        android:layout_toRightOf="@+id/otherLocoAddressTextView"
+        android:ems="4"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/addRemoteLocoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/otherLocoAddressTextView"
+        android:layout_below="@+id/otherLocoAddressEditText"
+        android:text="Add" />
+
+    <Button
+        android:id="@+id/removeRemoteLocoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/otherLocoAddressEditText"
+        android:layout_toRightOf="@+id/locoAddresssEditText"
+        android:text="Remove" />
 
 </RelativeLayout>
