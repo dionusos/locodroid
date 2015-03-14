@@ -1,7 +1,7 @@
 package hu.denes.locodroid;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,8 +15,13 @@ import com.esotericsoftware.kryonet.Client;
 
 public class ControlCenterAdapter extends BaseAdapter {
 
-	ArrayList<String> hosts;
-	Client client;
+	private ArrayList<String> hosts;
+	private final Client client;
+
+	public void setHosts(final List<String> l) {
+		hosts.clear();
+		hosts.addAll(l);
+	}
 
 	public void save(final Bundle out) {
 		out.putStringArrayList("HOSTS", hosts);
@@ -28,9 +33,10 @@ public class ControlCenterAdapter extends BaseAdapter {
 
 	public void refresh() {
 		hosts.clear();
-		for (final InetAddress a : client.discoverHosts(54777, 5000)) {
-			hosts.add(a.getHostAddress());
-		}
+
+		final DiscoverControlCentersAsyncTask t = new DiscoverControlCentersAsyncTask(
+				this);
+		t.execute((Object) client);
 	}
 
 	public ControlCenterAdapter(final Client client) {
