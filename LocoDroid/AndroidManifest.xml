@@ -30,6 +30,14 @@
             android:name=".TrainDriverActivity"
             android:label="@string/title_activity_train_driver" >
         </activity>
+        <activity
+            android:name=".LocoListActivity"
+            android:label="@string/title_activity_loco_list"
+            android:parentActivityName="android.app.ListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.app.ListActivity" />
+        </activity>
     </application>
 
 </manifest>
