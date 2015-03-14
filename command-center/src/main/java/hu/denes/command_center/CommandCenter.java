@@ -25,9 +25,15 @@ public class CommandCenter {
 		networkConnection.startServer(tcpPort, udpPort);
 
 		final List<Loco> locos = new ArrayList<Loco>();
-		locos.add(new Loco(1, rc));
-		locos.add(new Loco(2, rc));
-		locos.add(new Loco(3, rc));
+		Loco l = new Loco(1, rc);
+		l.setName("Taurus");
+		locos.add(l);
+		l = new Loco(2, rc);
+		l.setName("Traxx");
+		locos.add(l);
+		l = new Loco(3, rc);
+		l.setName("Hercules");
+		locos.add(l);
 		networkConnection.setLocos(locos);
 
 		final Scanner keyboard = new Scanner(System.in);

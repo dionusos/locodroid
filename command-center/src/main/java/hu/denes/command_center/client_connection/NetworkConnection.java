@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -45,8 +46,9 @@ public class NetworkConnection {
 					final Object object) {
 				if (object instanceof String) {
 					final String request = (String) object;
-					processJson(request);
-					final String response = "OK";
+					System.out.println("Request: " + request);
+					final String response = processJson(request);
+					System.out.println("Response: " + response);
 					connection.sendTCP(response);
 				}
 			}
@@ -80,20 +82,58 @@ public class NetworkConnection {
 
 	}
 
-	private void processJson(final String request) {
+	private String processJson(final String request) {
+		String ret = "";
 		final JSONObject jo = new JSONObject(request);
 		switch (jo.getString("target")) {
 		case "loco":
-			processLoco(jo.getJSONObject("function"));
+			ret = processLoco(jo.getJSONObject("function"));
+			break;
+
+		case "command-center":
+			ret = processCCCommand(jo.getJSONObject("function"));
 			break;
 		}
+		return ret;
 	}
 
-	private void processLoco(final JSONObject o) {
+	private String processCCCommand(final JSONObject jsonObject) {
+		final String query = jsonObject.getString("type");
+		String ret = "";
+		switch (query) {
+		case "get-locos":
+			final JSONObject jo = new JSONObject();
+			jo.put("target", "client");
+			final JSONObject function = new JSONObject();
+			final JSONArray arr = new JSONArray();
+			function.put("type", "answer-get-locos");
+			for (final Integer addr : locoMap.keySet()) {
+				final Loco l = locoMap.get(addr);
+				final JSONObject jLoco = new JSONObject();
+				jLoco.put("name", l.getName());
+				jLoco.put("address", l.getAddress());
+				arr.put(jLoco);
+			}
+			function.put("value", arr);
+			jo.put("function", function);
+			System.out.println(jo.toString());
+			ret = jo.toString();
+			break;
+
+		default:
+			break;
+		}
+
+		return ret;
+
+	}
+
+	private String processLoco(final JSONObject o) {
 		final String value = o.getString("value");
 		final Integer address = o.getInt("address");
+		final String ret = "";
 		if (!locoMap.containsKey(address)) {
-			return;
+			return ret;
 		}
 		switch (o.getString("type")) {
 		case "lights":
@@ -126,5 +166,7 @@ public class NetworkConnection {
 					locoMap.get(Integer.parseInt(value)));
 			break;
 		}
+		return ret;
 	}
+
 }
