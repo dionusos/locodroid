@@ -119,6 +119,21 @@ public class NetworkConnection {
 			System.out.println(jo.toString());
 			ret = jo.toString();
 			break;
+		case "save-loco":
+			final JSONObject jLoco = jsonObject.getJSONObject("value");
+			System.out.println(jLoco.toString());
+			final Loco loco = new Loco(jLoco.getInt("address"),
+					railwayConnection);
+			loco.setName(jLoco.getString("name"));
+			loco.setMaxSpeed(jLoco.getInt("max-speed"));
+			if (!locoMap.containsKey(loco.getAddress())) {
+				locoMap.put(loco.getAddress(), loco);
+				ret = "OK";
+			} else {
+				ret = "ERROR!";
+			}
+
+			break;
 
 		default:
 			break;
