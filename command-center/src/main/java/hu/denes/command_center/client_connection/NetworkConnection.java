@@ -178,6 +178,7 @@ public class NetworkConnection {
 			}
 			locoMap.get(address).addRemoteLoco(
 					locoMap.get(Integer.parseInt(value)));
+			removeSelfLocoFromRemote(value, address);
 			break;
 		case "remove-loco-from-train":
 			if (!locoMap.containsKey(Integer.parseInt(value))) {
@@ -188,6 +189,12 @@ public class NetworkConnection {
 			break;
 		}
 		return ret;
+	}
+
+	private void removeSelfLocoFromRemote(final String remoteLocoAddress,
+			final Integer thisLocoAddress) {
+		locoMap.get(Integer.parseInt(remoteLocoAddress)).removeRemoteLoco(
+				locoMap.get(thisLocoAddress));
 	}
 
 }
