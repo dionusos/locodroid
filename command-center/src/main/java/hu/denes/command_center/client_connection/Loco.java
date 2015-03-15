@@ -13,6 +13,13 @@ import java.util.Set;
 public class Loco {
 	private final Integer address;
 	private String name;
+	private DIRECTION direction;
+	private int speed;
+	private int maxSpeed;
+	private final Map<String, Integer> functionMap;
+	private final Set<String> activatedFunctions;
+	private final List<Loco> remoteLocos;
+	private final RailwayConnection connection;
 
 	public String getName() {
 		return name;
@@ -22,8 +29,6 @@ public class Loco {
 		this.name = name;
 	}
 
-	private DIRECTION direction;
-
 	public DIRECTION getDirection() {
 		return direction;
 	}
@@ -32,13 +37,6 @@ public class Loco {
 		this.direction = dir;
 		connection.setDirection(address, dir);
 	}
-
-	private int speed;
-	private int maxSpeed;
-	private final Map<String, Integer> functionMap;
-	private final Set<String> activatedFunctions;
-	private final List<Loco> remoteLocos;
-	private final RailwayConnection connection;
 
 	public void activateFunction(final String func) {
 		connection.turnFunctionOn(address, functionMap.get(func));
