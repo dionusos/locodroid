@@ -158,10 +158,16 @@ public class NetworkConnection {
 			locoMap.get(address).deactivateFunction(value);
 			break;
 		case "add-loco-to-train":
+			if (!locoMap.containsKey(Integer.parseInt(value))) {
+				return "";
+			}
 			locoMap.get(address).addRemoteLoco(
 					locoMap.get(Integer.parseInt(value)));
 			break;
 		case "remove-loco-from-train":
+			if (!locoMap.containsKey(Integer.parseInt(value))) {
+				return "";
+			}
 			locoMap.get(address).removeRemoteLoco(
 					locoMap.get(Integer.parseInt(value)));
 			break;
