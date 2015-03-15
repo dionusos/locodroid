@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/speedSeekBar"
-        android:layout_alignTop="@+id/editText1"
+        android:layout_alignTop="@+id/locoNameEditText"
         android:text="Lights" />
 
     <SeekBar
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/otherLocoAddressTextView"
         android:layout_below="@+id/otherLocoAddressEditText"
-        android:text="Button" />
+        android:text="Add" />
 
     <Button
         android:id="@+id/removeRemoteLocoButton"

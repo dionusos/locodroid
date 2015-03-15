@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_train_driver">TrainDriver</string>
     <string name="title_activity_loco_list">LocoListActivity</string>
+    <string name="title_activity_add_new_loco">AddNewLocoActivity</string>
 
 </resources>

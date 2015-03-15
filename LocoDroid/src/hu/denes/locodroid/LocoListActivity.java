@@ -46,6 +46,17 @@ public class LocoListActivity extends ListActivity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
+		if (id == R.id.refreshListMenuItem) {
+			adapter.refresh();
+			return true;
+		}
+		if (id == R.id.addNewLocoMenuItem) {
+			final Intent intent = new Intent(this, AddNewLocoActivity.class);
+			intent.putExtra("hostAddress", controlCenterAddress);
+			intent.putExtra("loco-type", "new-loco");
+			startActivity(intent);
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
