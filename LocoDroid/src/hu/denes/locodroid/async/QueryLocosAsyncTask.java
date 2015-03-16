@@ -13,7 +13,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 public class QueryLocosAsyncTask extends
-		AsyncTask<Object, Integer, ArrayList<Loco>> {
+AsyncTask<Object, Integer, ArrayList<Loco>> {
 	LocoListAdapter adapter;
 	String hostAddress;
 
@@ -28,10 +28,10 @@ public class QueryLocosAsyncTask extends
 		final ArrayList<Loco> locos = new ArrayList<Loco>();
 		try {
 			ClientSingleton
-					.getInstance()
-					.getClient()
-					.connect(5000, InetAddress.getByName(hostAddress), 54555,
-							54777);
+			.getInstance()
+			.getClient()
+			.connect(5000, InetAddress.getByName(hostAddress), 54555,
+					54777);
 
 			final String query = "{" + "\"target\": \"command-center\","
 					+ "\"function\": {" + "\"type\": \"get-locos\","
@@ -45,6 +45,13 @@ public class QueryLocosAsyncTask extends
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+		try {
+			Thread.sleep(1000);
+		} catch (final InterruptedException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
 		}
 
 		return locos;
