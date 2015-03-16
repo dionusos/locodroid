@@ -27,13 +27,15 @@ public class LocoListAdapter extends BaseAdapter {
 	public LocoListAdapter(final String hostAddress) {
 		this.hostAddress = hostAddress;
 		locos = new ArrayList<Loco>();
-		final BaseAdapter a = this;
 		ClientSingleton.getInstance().getClient().addListener(new Listener() {
 			@Override
 			public void received(final Connection connection,
 					final Object object) {
 				if (object instanceof String) {
 					final String response = (String) object;
+					if (!response.startsWith("{")) {
+						return;
+					}
 					try {
 						final JSONObject jo = new JSONObject(response);
 						if ("client".equals(jo.get("target"))) {
@@ -52,7 +54,6 @@ public class LocoListAdapter extends BaseAdapter {
 								}
 							}
 						}
-
 					} catch (final JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
