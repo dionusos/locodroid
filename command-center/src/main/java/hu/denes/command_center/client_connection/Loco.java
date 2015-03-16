@@ -3,23 +3,50 @@ package hu.denes.command_center.client_connection;
 import hu.denes.command_center.roco_connection.RailwayConnection;
 import hu.denes.command_center.roco_connection.RailwayConnection.DIRECTION;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+@Entity
 public class Loco {
-	private final Integer address;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int ID;
+	private Integer address;
 	private String name;
 	private DIRECTION direction;
 	private int speed;
 	private int maxSpeed;
-	private final Map<String, Integer> functionMap;
-	private final Set<String> activatedFunctions;
-	private final List<Loco> remoteLocos;
-	private final RailwayConnection connection;
+	@Transient
+	private Map<String, Integer> functionMap;
+	@Transient
+	private Set<String> activatedFunctions;
+	@Transient
+	private Set<Loco> remoteLocos;
+	@Transient
+	private RailwayConnection connection;
+
+	public void setRailwayConnection(final RailwayConnection c) {
+		connection = c;
+	}
+
+	private void init() {
+		remoteLocos = new HashSet<Loco>();
+		functionMap = new HashMap<String, Integer>();
+		activatedFunctions = new HashSet<String>();
+	}
+
+	public Loco() {
+		init();
+	}
 
 	public String getName() {
 		return name;
@@ -52,7 +79,7 @@ public class Loco {
 		this.address = address;
 		this.connection = connection;
 		direction = DIRECTION.FORWARD;
-		remoteLocos = new ArrayList<Loco>();
+		remoteLocos = new HashSet<Loco>();
 		functionMap = new HashMap<String, Integer>();
 		activatedFunctions = new HashSet<String>();
 		maxSpeed = 128;
@@ -99,7 +126,7 @@ public class Loco {
 		return speed;
 	}
 
-	public List<Loco> getRemoteLocos() {
+	public Collection<Loco> getRemoteLocos() {
 		return remoteLocos;
 	}
 

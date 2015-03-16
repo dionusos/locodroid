@@ -5,9 +5,6 @@ import hu.denes.command_center.roco_connection.RailwayConnection.DIRECTION;
 import hu.denes.command_center.storage.Storage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +14,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
 public class NetworkConnection {
-	private final Map<Integer, Loco> locoMap;
+	// private final Map<Integer, Loco> storage;
 	private final Storage storage;
 	private Server server;
 	private final RailwayConnection railwayConnection;
@@ -28,6 +25,7 @@ public class NetworkConnection {
 			server = null;
 		}
 		server = new Server();
+		System.out.println("Server started!");
 
 		try {
 			server.bind(tcpPort, udpPort);
@@ -59,22 +57,7 @@ public class NetworkConnection {
 			final RailwayConnection railwayConnection) {
 		this.storage = storage;
 		this.railwayConnection = railwayConnection;
-		locoMap = new HashMap<Integer, Loco>();
 		server = null;
-	}
-
-	public void setLocos(final List<Loco> locoList) {
-		for (final Loco l : locoList) {
-			locoMap.put(l.getAddress(), l);
-		}
-	}
-
-	public void loadLocos() {
-		storage.getLocoList();
-	}
-
-	public void saveLocos() {
-		storage.saveLocos(locoMap.values());
 	}
 
 	public void stopServer() {
@@ -107,8 +90,8 @@ public class NetworkConnection {
 			final JSONObject function = new JSONObject();
 			final JSONArray arr = new JSONArray();
 			function.put("type", "answer-get-locos");
-			for (final Integer addr : locoMap.keySet()) {
-				final Loco l = locoMap.get(addr);
+			for (final Integer addr : storage.getLocoAddresses()) {
+				final Loco l = storage.getLocoByAddress(addr);
 				final JSONObject jLoco = new JSONObject();
 				jLoco.put("name", l.getName());
 				jLoco.put("address", l.getAddress());
@@ -126,8 +109,8 @@ public class NetworkConnection {
 					railwayConnection);
 			loco.setName(jLoco.getString("name"));
 			loco.setMaxSpeed(jLoco.getInt("max-speed"));
-			if (!locoMap.containsKey(loco.getAddress())) {
-				locoMap.put(loco.getAddress(), loco);
+			if (!storage.isLocoExistByAddress(loco.getAddress())) {
+				storage.addLoco(loco);
 				ret = "OK";
 			} else {
 				ret = "ERROR!";
@@ -147,45 +130,45 @@ public class NetworkConnection {
 		final String value = o.getString("value");
 		final Integer address = o.getInt("address");
 		final String ret = "";
-		if (!locoMap.containsKey(address)) {
+		if (!storage.isLocoExistByAddress(address)) {
 			return ret;
 		}
 		switch (o.getString("type")) {
 		case "lights":
 			if ("on".equals(value)) {
-				locoMap.get(address).turnLightsOn();
+				storage.getLocoByAddress(address).turnLightsOn();
 			} else if ("off".equals(value)) {
-				locoMap.get(address).turnLightsOff();
+				storage.getLocoByAddress(address).turnLightsOff();
 			}
 			break;
 		case "speed":
-			locoMap.get(address).setSpeed(Integer.parseInt(value));
+			storage.getLocoByAddress(address).setSpeed(Integer.parseInt(value));
 			break;
 		case "direction":
-			locoMap.get(address).setDirection(
+			storage.getLocoByAddress(address).setDirection(
 					"forward".equals(value) ? DIRECTION.FORWARD
 							: DIRECTION.BACKWARD);
 			break;
 		case "function-on":
-			locoMap.get(address).activateFunction(value);
+			storage.getLocoByAddress(address).activateFunction(value);
 			break;
 		case "function-off":
-			locoMap.get(address).deactivateFunction(value);
+			storage.getLocoByAddress(address).deactivateFunction(value);
 			break;
 		case "add-loco-to-train":
-			if (!locoMap.containsKey(Integer.parseInt(value))) {
+			if (!storage.isLocoExistByAddress(Integer.parseInt(value))) {
 				return "";
 			}
-			locoMap.get(address).addRemoteLoco(
-					locoMap.get(Integer.parseInt(value)));
+			storage.getLocoByAddress(address).addRemoteLoco(
+					storage.getLocoByAddress(Integer.parseInt(value)));
 			removeSelfLocoFromRemote(value, address);
 			break;
 		case "remove-loco-from-train":
-			if (!locoMap.containsKey(Integer.parseInt(value))) {
+			if (!storage.isLocoExistByAddress(Integer.parseInt(value))) {
 				return "";
 			}
-			locoMap.get(address).removeRemoteLoco(
-					locoMap.get(Integer.parseInt(value)));
+			storage.getLocoByAddress(address).removeRemoteLoco(
+					storage.getLocoByAddress(Integer.parseInt(value)));
 			break;
 		}
 		return ret;
@@ -193,8 +176,8 @@ public class NetworkConnection {
 
 	private void removeSelfLocoFromRemote(final String remoteLocoAddress,
 			final Integer thisLocoAddress) {
-		locoMap.get(Integer.parseInt(remoteLocoAddress)).removeRemoteLoco(
-				locoMap.get(thisLocoAddress));
+		storage.getLocoByAddress(Integer.parseInt(remoteLocoAddress))
+		.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
 	}
 
 }
