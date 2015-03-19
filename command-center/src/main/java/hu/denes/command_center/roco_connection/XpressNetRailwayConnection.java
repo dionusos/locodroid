@@ -32,7 +32,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 			bytes[3] = (byte) address;
 		}
 		bytes[4] = (byte) speed;
-		bytes[5] = (byte) (bytes[0] ^ bytes[1] ^ bytes[2] ^ bytes[3] ^ bytes[4]);
+		bytes[5] = calculateXor(bytes);
 
 		final SerialPort serialPort = new SerialPort(serialTerminalName);
 		try {
@@ -41,6 +41,54 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);
 			serialPort.writeBytes(bytes);
+			final StringBuilder print = new StringBuilder();
+			for (int i = 0; i < bytes.length; ++i) {
+				print.append(bytes[i] + " ");
+			}
+			System.out.println("Speed set: " + print.toString());
+			serialPort.closePort();// Close serial port
+		} catch (final SerialPortException ex) {
+			System.out.println(ex);
+		}
+
+	}
+
+	private byte calculateXor(final byte[] array) {
+		byte ret = array[0];
+		for (int i = 1; i < array.length - 1; ++i) {
+			ret ^= array[i];
+		}
+		return ret;
+	}
+
+	@Override
+	public void turnLightsOn(final int address) {
+		final byte[] bytes = new byte[6];
+
+		bytes[0] = (byte) 228;
+		bytes[1] = (byte) 0x20;
+		if (address > 255) {
+			bytes[2] = (byte) (address / 255);
+			bytes[3] = (byte) (address % 255);
+		} else {
+			bytes[2] = (byte) 0x00;
+			bytes[3] = (byte) address;
+		}
+		bytes[4] = (byte) 0x10;
+		bytes[5] = calculateXor(bytes);
+
+		final SerialPort serialPort = new SerialPort(serialTerminalName);
+		try {
+			serialPort.openPort();// Open serial port
+			serialPort.setParams(SerialPort.BAUDRATE_9600,
+					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+					SerialPort.PARITY_NONE);
+			serialPort.writeBytes(bytes);
+			final StringBuilder print = new StringBuilder();
+			for (int i = 0; i < bytes.length; ++i) {
+				print.append(bytes[i] + " ");
+			}
+			System.out.println("Lights turned off: " + print.toString());
 			serialPort.closePort();// Close serial port
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
@@ -49,14 +97,37 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public void turnLightsOn(final int address) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void turnLightsOff(final int address) {
-		// TODO Auto-generated method stub
+		final byte[] bytes = new byte[6];
+
+		bytes[0] = (byte) 228;
+		bytes[1] = (byte) 0x20;
+		if (address > 255) {
+			bytes[2] = (byte) (address / 255);
+			bytes[3] = (byte) (address % 255);
+		} else {
+			bytes[2] = (byte) 0x00;
+			bytes[3] = (byte) address;
+		}
+		bytes[4] = (byte) 0;
+		bytes[5] = calculateXor(bytes);
+
+		final SerialPort serialPort = new SerialPort(serialTerminalName);
+		try {
+			serialPort.openPort();// Open serial port
+			serialPort.setParams(SerialPort.BAUDRATE_9600,
+					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+					SerialPort.PARITY_NONE);
+			serialPort.writeBytes(bytes);
+			final StringBuilder print = new StringBuilder();
+			for (int i = 0; i < bytes.length; ++i) {
+				print.append(bytes[i] + " ");
+			}
+			System.out.println("Lights turned off: " + print.toString());
+			serialPort.closePort();// Close serial port
+		} catch (final SerialPortException ex) {
+			System.out.println(ex);
+		}
 
 	}
 

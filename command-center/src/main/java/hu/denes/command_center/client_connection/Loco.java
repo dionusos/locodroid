@@ -76,11 +76,11 @@ public class Loco {
 	public Loco(final Integer address, final RailwayConnection connection) {
 		this.address = address;
 		this.connection = connection;
-		direction = 1;
+		direction = 128;
 		remoteLocos = new HashSet<Loco>();
 		functionMap = new HashMap<String, Integer>();
 		activatedFunctions = new HashSet<String>();
-		maxSpeed = 128;
+		maxSpeed = 127;
 		speed = 0;
 	}
 
