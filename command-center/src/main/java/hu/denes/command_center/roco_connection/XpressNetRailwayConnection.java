@@ -41,11 +41,6 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);
 			serialPort.writeBytes(bytes);
-			final StringBuilder print = new StringBuilder();
-			for (int i = 0; i < bytes.length; ++i) {
-				print.append(bytes[i] + " ");
-			}
-			System.out.println("Speed set: " + print.toString());
 			serialPort.closePort();// Close serial port
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
@@ -84,11 +79,6 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);
 			serialPort.writeBytes(bytes);
-			final StringBuilder print = new StringBuilder();
-			for (int i = 0; i < bytes.length; ++i) {
-				print.append(bytes[i] + " ");
-			}
-			System.out.println("Lights turned off: " + print.toString());
 			serialPort.closePort();// Close serial port
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
@@ -119,11 +109,6 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);
 			serialPort.writeBytes(bytes);
-			final StringBuilder print = new StringBuilder();
-			for (int i = 0; i < bytes.length; ++i) {
-				print.append(bytes[i] + " ");
-			}
-			System.out.println("Lights turned off: " + print.toString());
 			serialPort.closePort();// Close serial port
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
