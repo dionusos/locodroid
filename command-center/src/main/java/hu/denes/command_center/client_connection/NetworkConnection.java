@@ -1,7 +1,6 @@
 package hu.denes.command_center.client_connection;
 
 import hu.denes.command_center.roco_connection.RailwayConnection;
-import hu.denes.command_center.roco_connection.RailwayConnection.DIRECTION;
 import hu.denes.command_center.storage.Storage;
 
 import java.io.IOException;
@@ -146,8 +145,7 @@ public class NetworkConnection {
 			break;
 		case "direction":
 			storage.getLocoByAddress(address).setDirection(
-					"forward".equals(value) ? DIRECTION.FORWARD
-							: DIRECTION.BACKWARD);
+					"forward".equals(value) ? 128 : 0);
 			break;
 		case "function-on":
 			storage.getLocoByAddress(address).activateFunction(value);
@@ -177,7 +175,7 @@ public class NetworkConnection {
 	private void removeSelfLocoFromRemote(final String remoteLocoAddress,
 			final Integer thisLocoAddress) {
 		storage.getLocoByAddress(Integer.parseInt(remoteLocoAddress))
-		.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
+				.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
 	}
 
 }

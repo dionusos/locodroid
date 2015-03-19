@@ -1,7 +1,6 @@
 package hu.denes.command_center.client_connection;
 
 import hu.denes.command_center.roco_connection.RailwayConnection;
-import hu.denes.command_center.roco_connection.RailwayConnection.DIRECTION;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ public class Loco {
 	private int ID;
 	private Integer address;
 	private String name;
-	private DIRECTION direction;
+	private int direction;
 	private int speed;
 	private int maxSpeed;
 	@Transient
@@ -56,13 +55,12 @@ public class Loco {
 		this.name = name;
 	}
 
-	public DIRECTION getDirection() {
+	public int getDirection() {
 		return direction;
 	}
 
-	public void setDirection(final DIRECTION dir) {
+	public void setDirection(final int dir) {
 		this.direction = dir;
-		connection.setDirection(address, dir);
 	}
 
 	public void activateFunction(final String func) {
@@ -78,7 +76,7 @@ public class Loco {
 	public Loco(final Integer address, final RailwayConnection connection) {
 		this.address = address;
 		this.connection = connection;
-		direction = DIRECTION.FORWARD;
+		direction = 1;
 		remoteLocos = new HashSet<Loco>();
 		functionMap = new HashMap<String, Integer>();
 		activatedFunctions = new HashSet<String>();
@@ -118,7 +116,7 @@ public class Loco {
 		} else {
 			this.speed = speed;
 		}
-		connection.setSpeed(address, this.speed);
+		connection.setSpeed(address, this.speed + direction);
 		setRemoteLocoSpeed(this.speed);
 	}
 
