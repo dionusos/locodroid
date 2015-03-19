@@ -27,6 +27,13 @@ public class LocoTest {
 	@Test
 	public void testSpeedIsSetCorrectly() {
 		loco.setSpeed(10);
+		Mockito.verify(mockedConn).setSpeed(1, 10 + 128, loco.getMaxSpeed());
+	}
+
+	@Test
+	public void testSpeedIsSetCorrectlyReversed() {
+		loco.setDirection(0);
+		loco.setSpeed(10);
 		Mockito.verify(mockedConn).setSpeed(1, 10, loco.getMaxSpeed());
 	}
 
@@ -35,14 +42,24 @@ public class LocoTest {
 		final Loco loco2 = new Loco(2, mockedConn);
 		loco.addRemoteLoco(loco2);
 		loco.setSpeed(50);
-		Mockito.verify(mockedConn).setSpeed(1, 50, loco.getMaxSpeed());
+		Mockito.verify(mockedConn).setSpeed(1, 178, loco.getMaxSpeed());
+		Mockito.verify(mockedConn).setSpeed(2, 178, loco.getMaxSpeed());
+	}
+
+	@Test
+	public void testSpeedIsSetCorrectlyWhenRemoteLocosOneOfThemReversed() {
+		final Loco loco2 = new Loco(2, mockedConn);
+		loco2.setDirection(0);
+		loco.addRemoteLoco(loco2);
+		loco.setSpeed(50);
+		Mockito.verify(mockedConn).setSpeed(1, 178, loco.getMaxSpeed());
 		Mockito.verify(mockedConn).setSpeed(2, 50, loco.getMaxSpeed());
 	}
 
 	@Test
 	public void testSetSpeedGreaterThanMax() {
 		loco.setSpeed(200);
-		Assert.assertEquals(128, loco.getSpeed());
+		Assert.assertEquals(127, loco.getSpeed());
 	}
 
 	@Test
