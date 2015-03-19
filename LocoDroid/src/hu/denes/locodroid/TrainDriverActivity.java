@@ -14,6 +14,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -124,6 +125,21 @@ public class TrainDriverActivity extends Activity {
 						+ getLocoAddress()
 						+ ",	\"type\": \"remove-loco-from-train\", \"value\": \""
 						+ getOtherLocoAddress() + "\"} }";
+				sendCommand(request);
+
+			}
+		});
+
+		final Switch sw = (Switch) findViewById(R.id.directionSwitch);
+		sw.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView,
+					final boolean isChecked) {
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"direction\", \"value\": \""
+						+ (isChecked ? "forward" : "backward") + "\"} }";
 				sendCommand(request);
 
 			}

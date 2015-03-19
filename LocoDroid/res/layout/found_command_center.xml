@@ -8,8 +8,8 @@
     <TextView
         android:id="@+id/hostAddressTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="HostAddress"
+        android:layout_height="100dp"
+        android:text="@string/hostaddress"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>
