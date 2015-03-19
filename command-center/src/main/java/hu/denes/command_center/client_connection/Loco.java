@@ -61,6 +61,7 @@ public class Loco {
 
 	public void setDirection(final int dir) {
 		this.direction = dir;
+		setSpeed(speed);
 	}
 
 	public void activateFunction(final String func) {
