@@ -2,7 +2,7 @@ package hu.denes.command_center.roco_connection;
 
 public interface RailwayConnection {
 
-	public void setSpeed(int address, int speed);
+	public void setSpeed(int address, int speed, int maxSpeed);
 
 	public void turnLightsOn(int address);
 

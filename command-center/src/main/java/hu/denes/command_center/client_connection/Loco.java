@@ -116,7 +116,7 @@ public class Loco {
 		} else {
 			this.speed = speed;
 		}
-		connection.setSpeed(address, this.speed + direction);
+		connection.setSpeed(address, this.speed + direction, maxSpeed);
 		setRemoteLocoSpeed(this.speed);
 	}
 

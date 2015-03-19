@@ -21,13 +21,13 @@ public class LocoTest {
 	@Before
 	public void init() {
 		loco = new Loco(1, mockedConn);
-		loco.setMaxSpeed(128);
+		loco.setMaxSpeed(127);
 	}
 
 	@Test
 	public void testSpeedIsSetCorrectly() {
 		loco.setSpeed(10);
-		Mockito.verify(mockedConn).setSpeed(1, 10);
+		Mockito.verify(mockedConn).setSpeed(1, 10, loco.getMaxSpeed());
 	}
 
 	@Test
@@ -35,8 +35,8 @@ public class LocoTest {
 		final Loco loco2 = new Loco(2, mockedConn);
 		loco.addRemoteLoco(loco2);
 		loco.setSpeed(50);
-		Mockito.verify(mockedConn).setSpeed(1, 50);
-		Mockito.verify(mockedConn).setSpeed(2, 50);
+		Mockito.verify(mockedConn).setSpeed(1, 50, loco.getMaxSpeed());
+		Mockito.verify(mockedConn).setSpeed(2, 50, loco.getMaxSpeed());
 	}
 
 	@Test

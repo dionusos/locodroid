@@ -3,7 +3,7 @@ package hu.denes.command_center.roco_connection;
 public class PrintoutConnection implements RailwayConnection {
 
 	@Override
-	public void setSpeed(final int address, final int speed) {
+	public void setSpeed(final int address, final int speed, final int maxSpeed) {
 		System.out.println("Speed set to " + speed + " @ " + address);
 
 	}
