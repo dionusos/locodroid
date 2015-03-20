@@ -42,6 +42,7 @@
             android:name=".AddNewLocoActivity"
             android:label="@string/title_activity_add_new_loco" >
         </activity>
+        <service android:name="hu.denes.locodroid.service.NetworkCommunicationService" />
     </application>
 
 </manifest>
