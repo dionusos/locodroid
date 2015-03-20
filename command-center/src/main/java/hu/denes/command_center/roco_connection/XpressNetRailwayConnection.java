@@ -8,22 +8,42 @@ import jssc.SerialPortException;
 
 public class XpressNetRailwayConnection implements RailwayConnection {
 	String serialTerminalName;
+	final SerialPort serialPort;
+	final Map<Integer, Byte> locoArressIdentificationMap = new HashMap<Integer, Byte>();
 
 	public XpressNetRailwayConnection(final String serialTerminalName) {
 		this.serialTerminalName = serialTerminalName;
+		serialPort = new SerialPort(serialTerminalName);
+		try {
+			serialPort.openPort(); // Open serial port
+			serialPort.setParams(SerialPort.BAUDRATE_9600,
+					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+					SerialPort.PARITY_NONE);
+		} catch (final SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		locoArressIdentificationMap.put(13, (byte) 0x10);
+		locoArressIdentificationMap.put(26, (byte) 0x11);
+		locoArressIdentificationMap.put(27, (byte) 0x12);
+		locoArressIdentificationMap.put(127, (byte) 0x13);
+	}
+
+	public void close() {
+		try {
+			serialPort.closePort();
+		} catch (final SerialPortException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void setSpeed(final int address, final int speed, final int maxSpeed) {
 		final byte[] bytes = new byte[6];
-		final Map<Integer, Byte> map = new HashMap<Integer, Byte>();
-		map.put(13, (byte) 0x10);
-		map.put(26, (byte) 0x11);
-		map.put(27, (byte) 0x12);
-		map.put(127, (byte) 0x13);
 
 		bytes[0] = (byte) 0xe4;
-		bytes[1] = map.get(maxSpeed);
+		bytes[1] = locoArressIdentificationMap.get(maxSpeed);
 		if (address > 255) {
 			bytes[2] = (byte) (address / 255);
 			bytes[3] = (byte) (address % 255);
@@ -34,14 +54,10 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		bytes[4] = (byte) speed;
 		bytes[5] = calculateXor(bytes);
 
-		final SerialPort serialPort = new SerialPort(serialTerminalName);
 		try {
-			serialPort.openPort();// Open serial port
-			serialPort.setParams(SerialPort.BAUDRATE_9600,
-					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
+
 			serialPort.writeBytes(bytes);
-			serialPort.closePort();// Close serial port
+
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
 		}
@@ -72,14 +88,8 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		bytes[4] = (byte) 0x10;
 		bytes[5] = calculateXor(bytes);
 
-		final SerialPort serialPort = new SerialPort(serialTerminalName);
 		try {
-			serialPort.openPort();// Open serial port
-			serialPort.setParams(SerialPort.BAUDRATE_9600,
-					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
 			serialPort.writeBytes(bytes);
-			serialPort.closePort();// Close serial port
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
 		}
@@ -102,14 +112,8 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		bytes[4] = (byte) 0;
 		bytes[5] = calculateXor(bytes);
 
-		final SerialPort serialPort = new SerialPort(serialTerminalName);
 		try {
-			serialPort.openPort();// Open serial port
-			serialPort.setParams(SerialPort.BAUDRATE_9600,
-					SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
 			serialPort.writeBytes(bytes);
-			serialPort.closePort();// Close serial port
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
 		}

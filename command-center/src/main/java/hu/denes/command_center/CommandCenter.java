@@ -44,6 +44,7 @@ public class CommandCenter {
 		networkConnection.stopServer();
 		storage.closeDB();
 		keyboard.close();
+		rc.close();
 		System.out.println("Good Bye!");
 	}
 }
