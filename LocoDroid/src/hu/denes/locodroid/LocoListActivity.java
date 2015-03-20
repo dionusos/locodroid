@@ -2,9 +2,17 @@ package hu.denes.locodroid;
 
 import hu.denes.locodroid.adapter.Loco;
 import hu.denes.locodroid.adapter.LocoListAdapter;
+
+import java.util.ArrayList;
+
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,8 +20,26 @@ import android.widget.ListView;
 
 public class LocoListActivity extends ListActivity {
 
+	public final String ACTION = "LOCO_LIST_RECEIVED";
+
 	String controlCenterAddress;
 	LocoListAdapter adapter;
+	private final BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (intent == null) {
+				return;
+			}
+
+			final ArrayList<Loco> l = Globals.GLOBAL_LOCO_LIST;
+			if (l == null) {
+				return;
+			}
+			adapter.setLocos(l);
+			adapter.notifyDataSetChanged();
+		}
+
+	};
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -26,7 +52,12 @@ public class LocoListActivity extends ListActivity {
 		setListAdapter(adapter);
 		registerForContextMenu(getListView());
 
-		adapter.refresh();
+		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+				new IntentFilter("LOCO_LIST_RECEIVED"));
+
+		final Intent i = new Intent("GET_LOCO_LIST");
+		i.putExtra("job", "getLocoList");
+		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 
 	}
 
@@ -47,7 +78,11 @@ public class LocoListActivity extends ListActivity {
 			return true;
 		}
 		if (id == R.id.refreshListMenuItem) {
-			adapter.refresh();
+			final Intent i = new Intent("GET_LOCO_LIST");
+			i.putExtra("job", "getLocoList");
+			i.putExtra("hostAddress", controlCenterAddress);
+			LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+			Log.i("LocoListActivity", "refresh broadcast sent");
 			return true;
 		}
 		if (id == R.id.addNewLocoMenuItem) {

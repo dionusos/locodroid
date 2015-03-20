@@ -23,33 +23,33 @@ public class AddNewLocoActivity extends Activity {
 		final Intent i = getIntent();
 		hostAddress = i.getStringExtra("hostAddress");
 		((Button) findViewById(R.id.saveNewLocoButton))
-				.setOnClickListener(new OnClickListener() {
+		.setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(final View v) {
-						final Integer locoAddress = Integer
-								.parseInt(((EditText) findViewById(R.id.locoAddressEditText))
-										.getText().toString());
-						final Loco l = new Loco(locoAddress);
-						l.setName(((EditText) findViewById(R.id.locoNameEditText))
+			@Override
+			public void onClick(final View v) {
+				final Integer locoAddress = Integer
+						.parseInt(((EditText) findViewById(R.id.locoAddressEditText))
 								.getText().toString());
+				final Loco l = new Loco(locoAddress);
+				l.setName(((EditText) findViewById(R.id.locoNameEditText))
+						.getText().toString());
 
-						l.setMaxSpeed(Integer
-								.parseInt(((EditText) findViewById(R.id.maxSpeedEditText))
-										.getText().toString()));
+				l.setMaxSpeed(Integer
+						.parseInt(((EditText) findViewById(R.id.maxSpeedEditText))
+								.getText().toString()));
 
-						new SaveLocosAsyncTask(hostAddress).execute(l);
-						/*
-				 * final Intent intent = new Intent(null,
-				 * LocoListActivity.class);
-				 * intent.putExtra("hostAddress", hostAddress);
-				 * startActivity(intent);
-				 */
+				new SaveLocosAsyncTask(hostAddress).execute(l);
+
+						final Intent intent = new Intent(null,
+								LocoListActivity.class);
+						intent.putExtra("hostAddress", hostAddress);
+						startActivity(intent);
+
 						Toast.makeText(getApplicationContext(), "Loco added!",
-						Toast.LENGTH_SHORT).show();
+								Toast.LENGTH_SHORT).show();
 
-					}
-				});
+			}
+		});
 	}
 
 	@Override

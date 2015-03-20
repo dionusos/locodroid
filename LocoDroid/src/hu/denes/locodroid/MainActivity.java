@@ -1,6 +1,7 @@
 package hu.denes.locodroid;
 
 import hu.denes.locodroid.adapter.ControlCenterAdapter;
+import hu.denes.locodroid.service.NetworkCommunicationService;
 
 import java.net.InetAddress;
 
@@ -89,10 +90,10 @@ public class MainActivity extends ListActivity {
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
 				.getMenuInfo();
 		final int menuItemIndex = item.getItemId();
-
 		if (menuItemIndex == 0) {
 			final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
 					.getItem(info.position));
+
 			final Intent intent = new Intent(this, LocoListActivity.class);
 			intent.putExtra("hostAddress", hostAddress);
 			startActivity(intent);
@@ -106,6 +107,12 @@ public class MainActivity extends ListActivity {
 			final int position, final long id) {
 		final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
 				.getItem(position));
+		// create service
+		final Intent i = new Intent(this.getApplicationContext(),
+				NetworkCommunicationService.class);
+		i.putExtra("serverAddress", hostAddress);
+		startService(i);
+
 		final Intent intent = new Intent(this, LocoListActivity.class);
 		intent.putExtra("hostAddress", hostAddress);
 		startActivity(intent);

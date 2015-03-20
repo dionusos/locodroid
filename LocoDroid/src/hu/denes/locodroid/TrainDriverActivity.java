@@ -1,6 +1,6 @@
 package hu.denes.locodroid;
 
-import hu.denes.locodroid.async.TrainDriverCommandAsyncTask;
+import hu.denes.locodroid.async.SendCommandAsyncTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -178,7 +178,7 @@ public class TrainDriverActivity extends Activity {
 
 	private void sendCommand(final String request) {
 
-		new TrainDriverCommandAsyncTask().execute(request, hostAddress);
+		new SendCommandAsyncTask().execute(hostAddress, request);
 
 	}
 }

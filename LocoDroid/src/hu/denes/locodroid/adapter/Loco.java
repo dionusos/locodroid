@@ -1,6 +1,13 @@
 package hu.denes.locodroid.adapter;
 
-public class Loco {
+import java.io.Serializable;
+
+public class Loco implements Serializable {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 8258095225720305183L;
+
 	private Integer address;
 
 	public Integer getAddress() {
