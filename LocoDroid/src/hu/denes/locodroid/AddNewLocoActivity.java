@@ -36,14 +36,9 @@ public class AddNewLocoActivity extends Activity {
 
 				l.setMaxSpeed(Integer
 						.parseInt(((EditText) findViewById(R.id.maxSpeedEditText))
-								.getText().toString()));
+								.getText().toString()) - 1);
 
 				new SaveLocosAsyncTask(hostAddress).execute(l);
-
-						final Intent intent = new Intent(null,
-								LocoListActivity.class);
-						intent.putExtra("hostAddress", hostAddress);
-						startActivity(intent);
 
 						Toast.makeText(getApplicationContext(), "Loco added!",
 								Toast.LENGTH_SHORT).show();
