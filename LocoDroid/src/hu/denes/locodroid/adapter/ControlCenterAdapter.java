@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,17 @@ import android.widget.TextView;
 public class ControlCenterAdapter extends BaseAdapter {
 
 	private ArrayList<String> hosts;
+	Context context;
+
+	public void setContext(final Context ctx) {
+		context = ctx;
+	}
 
 	public void setHosts(final List<String> l) {
 		hosts.clear();
 		hosts.addAll(l);
+		final Intent i = new Intent("NETWORK-DISCOVERED");
+		LocalBroadcastManager.getInstance(context).sendBroadcast(i);
 	}
 
 	public void save(final Bundle out) {

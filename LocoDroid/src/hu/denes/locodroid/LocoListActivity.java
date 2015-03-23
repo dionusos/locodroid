@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,20 +79,6 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 
 			}
 		});
-		/*
-		 * lv.setOnItemClickListener(new OnItemClickListener() {
-		 * 
-		 * @Override protected void onListItemClick(final ListView l, final View
-		 * v, final int position, final long id) {
-		 * 
-		 * // super.onListItemClick(l, v, position, id); }
-		 * 
-		 * @Override public void onItemClick(final AdapterView<?> parent, final
-		 * View view, final int position, final long id) { // TODO
-		 * Auto-generated method stub
-		 * 
-		 * } });
-		 */
 
 		listView.setAdapter(adapter);
 		registerForContextMenu(listView);
@@ -103,6 +88,7 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 
 		final Intent i = new Intent("GET_LOCO_LIST");
 		i.putExtra("job", "getLocoList");
+		swipeRefreshLayout.setRefreshing(true);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 
 	}
@@ -121,14 +107,6 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 		// as you specify a parent activity in AndroidManifest.xml.
 		final int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
-		}
-		if (id == R.id.refreshListMenuItem) {
-			final Intent i = new Intent("GET_LOCO_LIST");
-			i.putExtra("job", "getLocoList");
-			i.putExtra("hostAddress", controlCenterAddress);
-			LocalBroadcastManager.getInstance(this).sendBroadcast(i);
-			Log.i("LocoListActivity", "refresh broadcast sent");
 			return true;
 		}
 		if (id == R.id.addNewLocoMenuItem) {

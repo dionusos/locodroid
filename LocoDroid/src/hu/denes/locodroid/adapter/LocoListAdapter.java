@@ -25,11 +25,6 @@ public class LocoListAdapter extends BaseAdapter {
 		locos = new ArrayList<Loco>();
 	}
 
-	/*
-	 * public void refresh() { locos.clear(); // final QueryLocosAsyncTask t =
-	 * new QueryLocosAsyncTask(this, // hostAddress); // t.execute(); }
-	 */
-
 	@Override
 	public int getCount() {
 
@@ -62,7 +57,7 @@ public class LocoListAdapter extends BaseAdapter {
 		((TextView) locoView.findViewById(R.id.locoNameTextView)).setText(loco
 				.getName());
 		((TextView) locoView.findViewById(R.id.locoAddressTextView))
-		.setText(loco.getAddress().toString());
+				.setText(loco.getAddress().toString());
 
 		return locoView;
 	}

@@ -5,35 +5,84 @@ import hu.denes.locodroid.service.NetworkCommunicationService;
 
 import java.net.InetAddress;
 
-import android.app.ListActivity;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends Activity implements OnRefreshListener {
 
 	InetAddress commandCenterAddress;
 	int currentLocoAddress = 0;
 	ControlCenterAdapter adapter;
 
+	private ListView listView;
+	private SwipeRefreshLayout swipeRefreshLayout;
+
+	private final BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (intent == null) {
+				return;
+			}
+			swipeRefreshLayout.setRefreshing(false);
+			adapter.notifyDataSetChanged();
+		}
+
+	};
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setContentView(R.layout.list_command_center);
-		// final StrictMode.ThreadPolicy policy = new
-		// StrictMode.ThreadPolicy.Builder().permitAll().build();
+		setContentView(R.layout.list_command_center);
 
-		// StrictMode.setThreadPolicy(policy);
+		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+				new IntentFilter("NETWORK-DISCOVERED"));
+
+		listView = (ListView) findViewById(R.id.list);
+		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshCommandCenterList);
+		swipeRefreshLayout.setOnRefreshListener(this);
+		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
+				Color.GREEN, Color.BLUE);
+		final Context _this = this;
+
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(final AdapterView<?> parent,
+					final View view, final int position, final long id) {
+				final String hostAddress = ((String) ((ControlCenterAdapter) listView
+						.getAdapter()).getItem(position));
+				// create service
+				final Intent i = new Intent(_this.getApplicationContext(),
+						NetworkCommunicationService.class);
+				i.putExtra("serverAddress", hostAddress);
+				startService(i);
+
+				final Intent intent = new Intent(_this, LocoListActivity.class);
+				intent.putExtra("hostAddress", hostAddress);
+				startActivity(intent);
+
+			}
+		});
 
 		ClientSingleton.getInstance().getClient().start();
 
 		adapter = new ControlCenterAdapter();
-		setListAdapter(adapter);
-		registerForContextMenu(getListView());
+		listView.setAdapter(adapter);
+		registerForContextMenu(listView);
 
 	}
 
@@ -77,11 +126,6 @@ public class MainActivity extends ListActivity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
-		if (id == R.id.refreshCommandCenters) {
-			adapter.refresh();
-			adapter.notifyDataSetChanged();
-			return true;
-		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -91,8 +135,8 @@ public class MainActivity extends ListActivity {
 				.getMenuInfo();
 		final int menuItemIndex = item.getItemId();
 		if (menuItemIndex == 0) {
-			final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
-					.getItem(info.position));
+			final String hostAddress = ((String) ((ControlCenterAdapter) listView
+					.getAdapter()).getItem(info.position));
 
 			final Intent intent = new Intent(this, LocoListActivity.class);
 			intent.putExtra("hostAddress", hostAddress);
@@ -100,23 +144,6 @@ public class MainActivity extends ListActivity {
 
 		}
 		return true;
-	}
-
-	@Override
-	protected void onListItemClick(final ListView l, final View v,
-			final int position, final long id) {
-		final String hostAddress = ((String) ((ControlCenterAdapter) getListAdapter())
-				.getItem(position));
-		// create service
-		final Intent i = new Intent(this.getApplicationContext(),
-				NetworkCommunicationService.class);
-		i.putExtra("serverAddress", hostAddress);
-		startService(i);
-
-		final Intent intent = new Intent(this, LocoListActivity.class);
-		intent.putExtra("hostAddress", hostAddress);
-		startActivity(intent);
-		// super.onListItemClick(l, v, position, id);
 	}
 
 	@Override
@@ -128,6 +155,13 @@ public class MainActivity extends ListActivity {
 	protected void onStop() {
 
 		super.onStop();
+	}
+
+	@Override
+	public void onRefresh() {
+		adapter.setContext(this);
+		adapter.refresh();
+
 	}
 
 }
