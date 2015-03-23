@@ -61,7 +61,11 @@ public class NetworkCommunicationService extends Service {
 	@Override
 	public int onStartCommand(final Intent intent, final int flags,
 			final int startId) {
-		hostAddress = intent.getStringExtra("serverAddress");
+		if (intent != null) {
+			hostAddress = intent.getStringExtra("serverAddress");
+		} else {
+			hostAddress = "127.0.0.1";
+		}
 		client = ClientSingleton.getInstance().getClient();
 		client.start();
 		_this = this;
