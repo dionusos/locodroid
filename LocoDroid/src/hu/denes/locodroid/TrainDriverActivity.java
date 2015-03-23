@@ -144,6 +144,31 @@ public class TrainDriverActivity extends Activity {
 
 			}
 		});
+
+		final Button decreaseSpeedButton = (Button) findViewById(R.id.decreaseSpeedButton);
+		decreaseSpeedButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(final View v) {
+				speedSeekBar.setProgress(speedSeekBar.getProgress() - 1);
+			}
+		});
+		final Button increaseSpeedButton = (Button) findViewById(R.id.increaseSpeedButton);
+		increaseSpeedButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(final View v) {
+				speedSeekBar.setProgress(speedSeekBar.getProgress() + 1);
+			}
+		});
+		final Button stopButton = (Button) findViewById(R.id.stopButton);
+		stopButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(final View v) {
+				speedSeekBar.setProgress(0);
+			}
+		});
 	}
 
 	@Override
