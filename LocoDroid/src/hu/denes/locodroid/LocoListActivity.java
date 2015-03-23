@@ -5,25 +5,33 @@ import hu.denes.locodroid.adapter.LocoListAdapter;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class LocoListActivity extends ListActivity {
+public class LocoListActivity extends Activity implements OnRefreshListener {
 
 	public final String ACTION = "LOCO_LIST_RECEIVED";
+	private ListView listView;
 
 	String controlCenterAddress;
 	LocoListAdapter adapter;
+
+	SwipeRefreshLayout swipeRefreshLayout;
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
@@ -37,6 +45,7 @@ public class LocoListActivity extends ListActivity {
 			}
 			adapter.setLocos(l);
 			adapter.notifyDataSetChanged();
+			swipeRefreshLayout.setRefreshing(false);
 		}
 
 	};
@@ -44,13 +53,50 @@ public class LocoListActivity extends ListActivity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setContentView(R.layout.activity_loco_list);
+		setContentView(R.layout.activity_loco_list);
 		final Intent intent = getIntent();
 		controlCenterAddress = intent.getStringExtra("hostAddress");
 		adapter = new LocoListAdapter(controlCenterAddress);
+		listView = (ListView) findViewById(R.id.list);
+		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLocoList);
+		swipeRefreshLayout.setOnRefreshListener(this);
+		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
+				Color.GREEN, Color.BLUE);
+		final Context _this = this;
 
-		setListAdapter(adapter);
-		registerForContextMenu(getListView());
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(final AdapterView<?> parent,
+					final View view, final int position, final long id) {
+				final Loco loco = ((Loco) ((LocoListAdapter) listView
+						.getAdapter()).getItem(position));
+				final Intent intent = new Intent(_this,
+						TrainDriverActivity.class);
+				intent.putExtra("hostAddress", controlCenterAddress);
+				intent.putExtra("locoAddress", loco.getAddress());
+				intent.putExtra("locoName", loco.getName());
+				startActivity(intent);
+
+			}
+		});
+		/*
+		 * lv.setOnItemClickListener(new OnItemClickListener() {
+		 * 
+		 * @Override protected void onListItemClick(final ListView l, final View
+		 * v, final int position, final long id) {
+		 * 
+		 * // super.onListItemClick(l, v, position, id); }
+		 * 
+		 * @Override public void onItemClick(final AdapterView<?> parent, final
+		 * View view, final int position, final long id) { // TODO
+		 * Auto-generated method stub
+		 * 
+		 * } });
+		 */
+
+		listView.setAdapter(adapter);
+		registerForContextMenu(listView);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
 				new IntentFilter("LOCO_LIST_RECEIVED"));
@@ -96,15 +142,10 @@ public class LocoListActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(final ListView l, final View v,
-			final int position, final long id) {
-		final Loco loco = ((Loco) ((LocoListAdapter) getListAdapter())
-				.getItem(position));
-		final Intent intent = new Intent(this, TrainDriverActivity.class);
-		intent.putExtra("hostAddress", controlCenterAddress);
-		intent.putExtra("locoAddress", loco.getAddress());
-		intent.putExtra("locoName", loco.getName());
-		startActivity(intent);
-		// super.onListItemClick(l, v, position, id);
+	public void onRefresh() {
+		final Intent i = new Intent("GET_LOCO_LIST");
+		i.putExtra("job", "getLocoList");
+		i.putExtra("hostAddress", controlCenterAddress);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 	}
 }
