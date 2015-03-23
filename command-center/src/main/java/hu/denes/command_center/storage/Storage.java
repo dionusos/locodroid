@@ -14,8 +14,9 @@ import javax.persistence.Query;
 
 public class Storage {
 
-	private static final String PERSISTENCE_UNIT_NAME = "mav-iit";
-	private static final String DBASE_DIRECTORY = "/home/denes/Work/teszt";
+	private static final String PERSISTENCE_UNIT_NAME = "LocoDroid";
+	private static final String DBASE_DIRECTORY = System
+			.getProperty("user.dir");
 
 	private EntityManagerFactory factory;
 	private EntityManager em;
