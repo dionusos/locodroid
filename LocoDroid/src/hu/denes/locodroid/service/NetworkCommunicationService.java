@@ -98,9 +98,9 @@ public class NetworkCommunicationService extends Service {
 								final Intent i = new Intent(
 										"LOCO_LIST_RECEIVED");
 								Globals.GLOBAL_LOCO_LIST = locos;
-								intent.putExtra("locoList", "globals");
+								i.putExtra("locoList", "globals");
 								LocalBroadcastManager.getInstance(_this)
-								.sendBroadcast(i);
+										.sendBroadcast(i);
 							}
 						}
 					} catch (final JSONException e) {
