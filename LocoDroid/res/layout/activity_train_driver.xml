@@ -1,5 +1,6 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshTrainDriver"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#4282c0"
@@ -10,75 +11,80 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="hu.denes.locodroid.TrainDriverActivity" >
 
-    <SeekBar
-        android:id="@+id/speedSeekBar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lightToggleButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/locoAddressTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <SeekBar
+            android:id="@+id/speedSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lightToggleButton"
+            android:layout_centerHorizontal="true" />
 
-    <ToggleButton
-        android:id="@+id/lightToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/speedSeekBar"
-        android:layout_alignTop="@+id/locoAddressTextView"
-        android:text="Lights" />
+        <TextView
+            android:id="@+id/locoAddressTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/increaseSpeedButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/speedSeekBar"
-        android:layout_below="@+id/speedSeekBar"
-        android:layout_marginTop="18dp"
-        android:text="+" />
+        <ToggleButton
+            android:id="@+id/lightToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/speedSeekBar"
+            android:layout_alignTop="@+id/locoAddressTextView"
+            android:text="Lights" />
 
-    <Button
-        android:id="@+id/stopButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/increaseSpeedButton"
-        android:layout_alignBottom="@+id/increaseSpeedButton"
-        android:layout_centerHorizontal="true"
-        android:text="Stop" />
+        <Button
+            android:id="@+id/increaseSpeedButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/speedSeekBar"
+            android:layout_below="@+id/speedSeekBar"
+            android:layout_marginTop="18dp"
+            android:text="+" />
 
-    <Button
-        android:id="@+id/decreaseSpeedButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/stopButton"
-        android:layout_alignBottom="@+id/stopButton"
-        android:layout_alignLeft="@+id/speedSeekBar"
-        android:text="-" />
+        <Button
+            android:id="@+id/stopButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/increaseSpeedButton"
+            android:layout_alignBottom="@+id/increaseSpeedButton"
+            android:layout_centerHorizontal="true"
+            android:text="Stop" />
 
-    <Button
-        android:id="@+id/addRemoteLocoButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/stopButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:text="Attach other Loco" />
+        <Button
+            android:id="@+id/decreaseSpeedButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/stopButton"
+            android:layout_alignBottom="@+id/stopButton"
+            android:layout_alignLeft="@+id/speedSeekBar"
+            android:text="-" />
 
-    <Switch
-        android:id="@+id/directionSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addRemoteLocoButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Forward" />
+        <Button
+            android:id="@+id/addRemoteLocoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/stopButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            android:text="Attach other Loco" />
 
-</RelativeLayout>
+        <Switch
+            android:id="@+id/directionSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addRemoteLocoButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="42dp"
+            android:text="Forward" />
+    </RelativeLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

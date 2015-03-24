@@ -52,4 +52,32 @@ public class Loco implements Serializable {
 		return ticked;
 	}
 
+	private int speed;
+	private boolean lightsOn;
+	private int direction;
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(final int speed) {
+		this.speed = speed;
+	}
+
+	public boolean isLightsOn() {
+		return lightsOn;
+	}
+
+	public void setLightsOn(final boolean lightsOn) {
+		this.lightsOn = lightsOn;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(final int direction) {
+		this.direction = direction;
+	}
+
 }

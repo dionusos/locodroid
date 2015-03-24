@@ -53,6 +53,14 @@ public class NetworkCommunicationService extends Service {
 						+ intent.getIntExtra("locoAddress", 0) + "\"" + "}"
 						+ "}";
 				sendData(query);
+			} else if ("getLocoDetails".equals(intent.getStringExtra("job"))) {
+				final String query = "{" + "\"target\": \"command-center\","
+						+ "\"function\": {" + "\"type\": \"get-loco-details\","
+						+ "\"value\": \""
+						+ intent.getIntExtra("locoAddress", 0) + "\"" + "}"
+						+ "}";
+				Log.i("NetworkComm: ", query);
+				sendData(query);
 			}
 		};
 	};
@@ -63,6 +71,8 @@ public class NetworkCommunicationService extends Service {
 				new IntentFilter("GET_LOCO_LIST"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
 				new IntentFilter("GET_ATTACHED_LOCO_LIST"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+				new IntentFilter("GET_LOCO_DETAILS"));
 		super.onCreate();
 	}
 
@@ -131,6 +141,25 @@ public class NetworkCommunicationService extends Service {
 										"ATTACHED_LOCO_LIST_RECEIVED");
 								Globals.GLOBAL_LOCO_LIST = locos;
 								i.putExtra("locoList", "globals");
+								LocalBroadcastManager.getInstance(_this)
+										.sendBroadcast(i);
+							} else if ("answer-get-loco-details"
+									.equals(function.get("type"))) {
+								final JSONObject jLoco = function
+										.getJSONObject("value");
+
+								final Loco loco = new Loco(jLoco
+										.getInt("address"));
+								loco.setName(jLoco.getString("name"));
+								loco.setLightsOn(jLoco.getBoolean("lightsOn"));
+								loco.setSpeed(jLoco.getInt("speed"));
+								loco.setMaxSpeed(jLoco.getInt("max-speed"));
+								loco.setDirection(jLoco.getInt("direction"));
+								final Intent i = new Intent(
+										"LOCO_DETAILS_RECEIVED");
+								Globals.GLOBAL_LOCO_MAP.put(loco.getAddress(),
+										loco);
+								i.putExtra("locoAddress", loco.getAddress());
 								LocalBroadcastManager.getInstance(_this)
 										.sendBroadcast(i);
 							}

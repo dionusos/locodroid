@@ -1,10 +1,17 @@
 package hu.denes.locodroid;
 
+import hu.denes.locodroid.adapter.Loco;
 import hu.denes.locodroid.async.SendCommandAsyncTask;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +25,42 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class TrainDriverActivity extends Activity {
+public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 	private String hostAddress;
 	private Integer locoAddress;
 	private String locoName;
 	private boolean emergencyStopped = false;
+	private SeekBar speedSeekBar;
+	private Switch sw;
+
+	private ToggleButton lightButton;
+
+	private SwipeRefreshLayout swipeRefreshLayout;
+	private final BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (intent == null) {
+				return;
+			}
+
+			if (intent.getIntExtra("locoAddress", 0) != locoAddress) {
+				return;
+			}
+
+			final Loco l = Globals.GLOBAL_LOCO_MAP.get(locoAddress);
+			if (l == null) {
+				return;
+			}
+
+			speedSeekBar.setMax(l.getMaxSpeed());
+			speedSeekBar.setProgress(l.getSpeed());
+			sw.setChecked(l.getDirection() == 128);
+			lightButton.setChecked(l.isLightsOn());
+			swipeRefreshLayout.setRefreshing(false);
+		}
+
+	};
 
 	private int getLocoAddress() {
 		return locoAddress;
@@ -39,9 +76,18 @@ public class TrainDriverActivity extends Activity {
 		locoName = intent.getStringExtra("locoName");
 		final Context _this = this;
 
+		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshTrainDriver);
+		swipeRefreshLayout.setDistanceToTriggerSync(500);
+		swipeRefreshLayout.setOnRefreshListener(this);
+		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
+				Color.GREEN, Color.BLUE);
+
+		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+				new IntentFilter("LOCO_DETAILS_RECEIVED"));
+
 		final TextView tv = (TextView) findViewById(R.id.locoAddressTextView);
 		tv.setText(locoName + "@" + locoAddress);
-		final ToggleButton lightButton = (ToggleButton) findViewById(R.id.lightToggleButton);
+		lightButton = (ToggleButton) findViewById(R.id.lightToggleButton);
 		lightButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -65,14 +111,18 @@ public class TrainDriverActivity extends Activity {
 
 		});
 
-		final SeekBar speedSeekBar = (SeekBar) findViewById(R.id.speedSeekBar);
+		speedSeekBar = (SeekBar) findViewById(R.id.speedSeekBar);
 		speedSeekBar.setMax(127);
 
 		speedSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			@Override
 			public void onStopTrackingTouch(final SeekBar seekBar) {
-				// TODO Auto-generated method stub
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"speed\", \"value\": \""
+						+ seekBar.getProgress() + "\"} }";
+				sendCommand(request);
 
 			}
 
@@ -85,13 +135,6 @@ public class TrainDriverActivity extends Activity {
 			@Override
 			public void onProgressChanged(final SeekBar seekBar,
 					final int progress, final boolean fromUser) {
-
-				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"speed\", \"value\": \""
-						+ progress
-						+ "\"} }";
-				sendCommand(request);
 
 			}
 		});
@@ -116,7 +159,7 @@ public class TrainDriverActivity extends Activity {
 			}
 		});
 
-		final Switch sw = (Switch) findViewById(R.id.directionSwitch);
+		sw = (Switch) findViewById(R.id.directionSwitch);
 		sw.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -137,6 +180,12 @@ public class TrainDriverActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				speedSeekBar.setProgress(speedSeekBar.getProgress() - 1);
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"speed\", \"value\": \""
+						+ speedSeekBar.getProgress() + "\"} }";
+				sendCommand(request);
+
 			}
 		});
 		final Button increaseSpeedButton = (Button) findViewById(R.id.increaseSpeedButton);
@@ -145,6 +194,11 @@ public class TrainDriverActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				speedSeekBar.setProgress(speedSeekBar.getProgress() + 1);
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"speed\", \"value\": \""
+						+ speedSeekBar.getProgress() + "\"} }";
+				sendCommand(request);
 			}
 		});
 		final Button stopButton = (Button) findViewById(R.id.stopButton);
@@ -163,6 +217,8 @@ public class TrainDriverActivity extends Activity {
 				}
 			}
 		});
+
+		onRefresh();
 	}
 
 	@Override
@@ -199,5 +255,15 @@ public class TrainDriverActivity extends Activity {
 
 		new SendCommandAsyncTask().execute(hostAddress, request);
 
+	}
+
+	@Override
+	public void onRefresh() {
+		swipeRefreshLayout.setRefreshing(true);
+		final Intent i = new Intent("GET_LOCO_DETAILS");
+		i.putExtra("job", "getLocoDetails");
+		i.putExtra("locoAddress", locoAddress);
+		i.putExtra("hostAddress", hostAddress);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 	}
 }
