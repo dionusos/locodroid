@@ -2,6 +2,7 @@ package hu.denes.locodroid;
 
 import hu.denes.locodroid.async.SendCommandAsyncTask;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
@@ -29,14 +29,6 @@ public class TrainDriverActivity extends Activity {
 		return locoAddress;
 	}
 
-	private int getOtherLocoAddress() {
-		final EditText et = (EditText) findViewById(R.id.otherLocoAddressEditText);
-		if ("".equals(et.getText().toString())) {
-			return 0;
-		}
-		return Integer.parseInt(et.getText().toString());
-	}
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,6 +37,7 @@ public class TrainDriverActivity extends Activity {
 		hostAddress = intent.getStringExtra("hostAddress");
 		locoAddress = intent.getIntExtra("locoAddress", 0);
 		locoName = intent.getStringExtra("locoName");
+		final Context _this = this;
 
 		final TextView tv = (TextView) findViewById(R.id.locoAddressTextView);
 		tv.setText(locoName + "@" + locoAddress);
@@ -108,25 +101,17 @@ public class TrainDriverActivity extends Activity {
 
 			@Override
 			public void onClick(final View v) {
-				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"add-loco-to-train\", \"value\": \""
-						+ getOtherLocoAddress() + "\"} }";
-				sendCommand(request);
-
-			}
-		});
-
-		final Button removeRemoteLoco = (Button) findViewById(R.id.removeRemoteLocoButton);
-		removeRemoteLoco.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(final View v) {
-				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"remove-loco-from-train\", \"value\": \""
-						+ getOtherLocoAddress() + "\"} }";
-				sendCommand(request);
+				/*
+				 * final String request =
+				 * "{\"target\": \"loco\",\"function\": {\"address\": " +
+				 * getLocoAddress() +
+				 * ",	\"type\": \"add-loco-to-train\", \"value\": \"" +
+				 * getOtherLocoAddress() + "\"} }"; sendCommand(request);
+				 */
+				final Intent i = new Intent(_this, AttachLocoActivity.class);
+				i.putExtra("hostAddress", hostAddress);
+				i.putExtra("locoAddress", locoAddress);
+				startActivity(i);
 
 			}
 		});

@@ -8,5 +8,6 @@
     <string name="title_activity_loco_list">LocoListActivity</string>
     <string name="title_activity_add_new_loco">AddNewLocoActivity</string>
     <string name="hostaddress">HostAddress</string>
+    <string name="title_activity_attach_loco">AttachLocoActivity</string>
 
 </resources>

@@ -42,4 +42,14 @@ public class Loco implements Serializable {
 		this.address = address;
 	}
 
+	private boolean ticked;
+
+	public void setTicked(final boolean ticked) {
+		this.ticked = ticked;
+	}
+
+	public boolean getTicked() {
+		return ticked;
+	}
+
 }

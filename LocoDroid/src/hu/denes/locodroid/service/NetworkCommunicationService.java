@@ -43,6 +43,16 @@ public class NetworkCommunicationService extends Service {
 						+ "\"function\": {" + "\"type\": \"get-locos\","
 						+ "\"value\": \"\"" + "}" + "}";
 				sendData(query);
+			} else if ("getAttachedLocoList".equals(intent
+					.getStringExtra("job"))) {
+				Log.i("NetworkCommunication",
+						"getAttachedLocoList broadcast received");
+				final String query = "{" + "\"target\": \"command-center\","
+						+ "\"function\": {"
+						+ "\"type\": \"get-attached-locos\"," + "\"value\": \""
+						+ intent.getIntExtra("locoAddress", 0) + "\"" + "}"
+						+ "}";
+				sendData(query);
 			}
 		};
 	};
@@ -51,6 +61,8 @@ public class NetworkCommunicationService extends Service {
 	public void onCreate() {
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
 				new IntentFilter("GET_LOCO_LIST"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+				new IntentFilter("GET_ATTACHED_LOCO_LIST"));
 		super.onCreate();
 	}
 
@@ -97,6 +109,26 @@ public class NetworkCommunicationService extends Service {
 								}
 								final Intent i = new Intent(
 										"LOCO_LIST_RECEIVED");
+								Globals.GLOBAL_LOCO_LIST = locos;
+								i.putExtra("locoList", "globals");
+								LocalBroadcastManager.getInstance(_this)
+										.sendBroadcast(i);
+							} else if ("answer-get-attached-locos"
+									.equals(function.get("type"))) {
+								final ArrayList<Loco> locos = new ArrayList<Loco>();
+								final JSONArray jLocos = function
+										.getJSONArray("value");
+								for (int i = 0; i < jLocos.length(); ++i) {
+									final JSONObject jLoco = (JSONObject) jLocos
+											.get(i);
+									final Loco loco = new Loco(jLoco
+											.getInt("address"));
+									loco.setName(jLoco.getString("name"));
+									loco.setTicked(jLoco.getBoolean("attached"));
+									locos.add(loco);
+								}
+								final Intent i = new Intent(
+										"ATTACHED_LOCO_LIST_RECEIVED");
 								Globals.GLOBAL_LOCO_LIST = locos;
 								i.putExtra("locoList", "globals");
 								LocalBroadcastManager.getInstance(_this)

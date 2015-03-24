@@ -57,9 +57,8 @@ public class LocoListAdapter extends BaseAdapter {
 		((TextView) locoView.findViewById(R.id.locoNameTextView)).setText(loco
 				.getName());
 		((TextView) locoView.findViewById(R.id.locoAddressTextView))
-				.setText(loco.getAddress().toString());
+		.setText(loco.getAddress().toString());
 
 		return locoView;
 	}
-
 }

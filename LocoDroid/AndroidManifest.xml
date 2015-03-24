@@ -19,8 +19,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" 
-            android:screenOrientation="portrait">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,24 +29,30 @@
         </activity>
         <activity
             android:name=".TrainDriverActivity"
-            android:label="@string/title_activity_train_driver" 
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_train_driver"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".LocoListActivity"
             android:label="@string/title_activity_loco_list"
-            android:parentActivityName="android.app.ListActivity" 
-            android:screenOrientation="portrait">
+            android:parentActivityName="android.app.ListActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.app.ListActivity" />
         </activity>
         <activity
             android:name=".AddNewLocoActivity"
-            android:label="@string/title_activity_add_new_loco" 
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_add_new_loco"
+            android:screenOrientation="portrait" >
         </activity>
-        <service android:name="hu.denes.locodroid.service.NetworkCommunicationService" />
+
+        <service android:name=".service.NetworkCommunicationService" />
+
+        <activity
+            android:name=".AttachLocoActivity"
+            android:label="@string/title_activity_attach_loco" >
+        </activity>
     </application>
 
 </manifest>
