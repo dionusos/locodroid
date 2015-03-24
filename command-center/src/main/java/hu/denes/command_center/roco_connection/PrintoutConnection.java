@@ -32,4 +32,16 @@ public class PrintoutConnection implements RailwayConnection {
 
 	}
 
+	@Override
+	public void stopOperations() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resumeOperations() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

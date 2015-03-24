@@ -132,4 +132,38 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 
 	}
 
+	@Override
+	public void stopOperations() {
+		final byte[] bytes = new byte[3];
+
+		bytes[0] = (byte) 0x21;
+		bytes[1] = (byte) 0x80;
+		bytes[2] = (byte) 0xA1;
+
+		try {
+			serialPort.writeBytes(bytes);
+			System.out.println("EMERGENCY STOP");
+		} catch (final SerialPortException ex) {
+			System.out.println(ex);
+		}
+
+	}
+
+	@Override
+	public void resumeOperations() {
+		final byte[] bytes = new byte[3];
+
+		bytes[0] = (byte) 0x21;
+		bytes[1] = (byte) 0x81;
+		bytes[2] = (byte) 0xA0;
+
+		try {
+			serialPort.writeBytes(bytes);
+			System.out.println("RESUME OPERATION");
+		} catch (final SerialPortException ex) {
+			System.out.println(ex);
+		}
+
+	}
+
 }

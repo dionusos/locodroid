@@ -43,13 +43,26 @@ public class NetworkConnection {
 					final Object object) {
 				if (object instanceof String) {
 					final String request = (String) object;
-					System.out.println("Request: " + request);
+					if (request.startsWith("STOP")) {
+						stopOperations();
+						return;
+					} else if (request.startsWith("RESUME")) {
+						resumeOperations();
+						return;
+					}
 					final String response = processJson(request);
-					System.out.println("Response: " + response);
 					connection.sendTCP(response);
 				}
 			}
 		});
+	}
+
+	protected void stopOperations() {
+		railwayConnection.stopOperations();
+	}
+
+	protected void resumeOperations() {
+		railwayConnection.resumeOperations();
 	}
 
 	public NetworkConnection(final Storage storage,
@@ -175,7 +188,7 @@ public class NetworkConnection {
 	private void removeSelfLocoFromRemote(final String remoteLocoAddress,
 			final Integer thisLocoAddress) {
 		storage.getLocoByAddress(Integer.parseInt(remoteLocoAddress))
-				.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
+		.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
 	}
 
 }

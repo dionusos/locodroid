@@ -12,4 +12,8 @@ public interface RailwayConnection {
 
 	public void turnFunctionOff(int address, int function);
 
+	public void stopOperations();
+
+	public void resumeOperations();
+
 }
