@@ -23,6 +23,7 @@ public class TrainDriverActivity extends Activity {
 	private String hostAddress;
 	private Integer locoAddress;
 	private String locoName;
+	private boolean emergencyStopped = false;
 
 	private int getLocoAddress() {
 		return locoAddress;
@@ -166,7 +167,15 @@ public class TrainDriverActivity extends Activity {
 
 			@Override
 			public void onClick(final View v) {
-				speedSeekBar.setProgress(0);
+				if (!emergencyStopped) {
+					sendCommand("STOP");
+					stopButton.setText("RESUME");
+					emergencyStopped = true;
+				} else {
+					sendCommand("RESUME");
+					stopButton.setText("STOP");
+					emergencyStopped = false;
+				}
 			}
 		});
 	}
