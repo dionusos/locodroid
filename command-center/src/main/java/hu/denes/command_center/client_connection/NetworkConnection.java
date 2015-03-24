@@ -114,6 +114,33 @@ public class NetworkConnection {
 			System.out.println(jo.toString());
 			ret = jo.toString();
 			break;
+		case "get-attached-locos":
+			final JSONObject jo2 = new JSONObject();
+			jo2.put("target", "client");
+			final JSONObject function2 = new JSONObject();
+			final JSONArray arr2 = new JSONArray();
+			function2.put("type", "answer-get-attached-locos");
+			final Loco drivenLoco = storage.getLocoByAddress(jsonObject
+					.getInt("value"));
+			for (final Integer addr : storage.getLocoAddresses()) {
+				final Loco l = storage.getLocoByAddress(addr);
+				if (addr == drivenLoco.getAddress()) {
+					continue;
+				}
+				final JSONObject jLoco = new JSONObject();
+				jLoco.put("name", l.getName());
+				jLoco.put("address", l.getAddress());
+				jLoco.put(
+						"attached",
+						drivenLoco.getRemoteLocos().contains(
+								storage.getLocoByAddress(addr)) ? true : false);
+				arr2.put(jLoco);
+			}
+			function2.put("value", arr2);
+			jo2.put("function", function2);
+			System.out.println(jo2.toString());
+			ret = jo2.toString();
+			break;
 		case "save-loco":
 			final JSONObject jLoco = jsonObject.getJSONObject("value");
 			System.out.println(jLoco.toString());
