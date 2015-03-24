@@ -96,6 +96,27 @@ public class NetworkConnection {
 		final String query = jsonObject.getString("type");
 		String ret = "";
 		switch (query) {
+		case "get-loco-details":
+			final JSONObject jo0 = new JSONObject();
+			jo0.put("target", "client");
+			final JSONObject function0 = new JSONObject();
+			function0.put("type", "answer-get-loco-details");
+			final Loco l0 = storage.getLocoByAddress(Integer
+					.parseInt(jsonObject.getString("value")));
+			final JSONObject jLoco0 = new JSONObject();
+			jLoco0.put("name", l0.getName());
+			jLoco0.put("address", l0.getAddress());
+			jLoco0.put("direction", l0.getDirection());
+			jLoco0.put("max-speed", l0.getMaxSpeed());
+			jLoco0.put("speed", l0.getSpeed());
+			jLoco0.put("lightsOn", l0.isLightsOn());
+
+			function0.put("value", jLoco0);
+			jo0.put("function", function0);
+			System.out.println(jo0.toString());
+			System.out.println(ret);
+			ret = jo0.toString();
+			break;
 		case "get-locos":
 			final JSONObject jo = new JSONObject();
 			jo.put("target", "client");

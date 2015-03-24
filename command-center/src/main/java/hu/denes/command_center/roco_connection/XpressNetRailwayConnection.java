@@ -57,7 +57,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		try {
 
 			serialPort.writeBytes(bytes);
-
+			System.out.println("Speed is set to " + speed + "@" + address);
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
 		}

@@ -24,6 +24,16 @@ public class Loco {
 	private int direction;
 	private int speed;
 	private int maxSpeed;
+	private boolean lightsOn;
+
+	public boolean isLightsOn() {
+		return lightsOn;
+	}
+
+	public void setLightsOn(final boolean lightsOn) {
+		this.lightsOn = lightsOn;
+	}
+
 	@Transient
 	private Map<String, Integer> functionMap;
 	@Transient
@@ -83,6 +93,7 @@ public class Loco {
 		activatedFunctions = new HashSet<String>();
 		maxSpeed = 127;
 		speed = 0;
+		lightsOn = false;
 	}
 
 	public void addFunction(final String function, final Integer val) {
@@ -103,10 +114,12 @@ public class Loco {
 
 	public void turnLightsOn() {
 		connection.turnLightsOn(address);
+		lightsOn = true;
 	}
 
 	public void turnLightsOff() {
 		connection.turnLightsOff(address);
+		lightsOn = false;
 	}
 
 	public void setSpeed(final int speed) {
