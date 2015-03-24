@@ -3,6 +3,7 @@ package hu.denes.locodroid;
 import hu.denes.locodroid.adapter.Loco;
 import hu.denes.locodroid.async.SaveLocosAsyncTask;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class AddNewLocoActivity extends Activity {
-	String hostAddress;
+	private String hostAddress;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -22,6 +23,7 @@ public class AddNewLocoActivity extends Activity {
 		setContentView(R.layout.activity_add_new_loco);
 		final Intent i = getIntent();
 		hostAddress = i.getStringExtra("hostAddress");
+		final Context _this = this;
 		((Button) findViewById(R.id.saveNewLocoButton))
 		.setOnClickListener(new OnClickListener() {
 
@@ -42,6 +44,10 @@ public class AddNewLocoActivity extends Activity {
 
 						Toast.makeText(getApplicationContext(), "Loco added!",
 								Toast.LENGTH_SHORT).show();
+				final Intent i = new Intent(_this,
+								LocoListActivity.class);
+				i.putExtra("hostAddress", hostAddress);
+				startActivity(i);
 
 			}
 		});
