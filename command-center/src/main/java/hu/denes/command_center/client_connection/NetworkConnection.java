@@ -235,8 +235,9 @@ public class NetworkConnection {
 
 	private void removeSelfLocoFromRemote(final String remoteLocoAddress,
 			final Integer thisLocoAddress) {
-		storage.getLocoByAddress(Integer.parseInt(remoteLocoAddress))
-		.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
+		final Loco l = storage.getLocoByAddress(Integer
+				.parseInt(remoteLocoAddress));
+		l.removeRemoteLoco(storage.getLocoByAddress(thisLocoAddress));
 	}
 
 }

@@ -2,12 +2,15 @@ package hu.denes.command_center.client_connection;
 
 import hu.denes.command_center.roco_connection.RailwayConnection;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,7 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 @Entity
-public class Loco {
+public class Loco implements Serializable {
+	private static final long serialVersionUID = -8941204227321172539L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int ID;
@@ -38,7 +42,8 @@ public class Loco {
 	private Map<String, Integer> functionMap;
 	@Transient
 	private Set<String> activatedFunctions;
-	@Transient
+	@ElementCollection
+	@Column(name = "remote_locos")
 	private Set<Loco> remoteLocos;
 	@Transient
 	private RailwayConnection connection;
@@ -70,7 +75,24 @@ public class Loco {
 	}
 
 	public void setDirection(final int dir) {
+		final int oldDir = this.direction;
 		this.direction = dir;
+		final int newDir = this.direction;
+		setSpeed(speed);
+
+		if (oldDir != newDir) {
+			for (final Loco l : remoteLocos) {
+				l.changeDirection();
+			}
+		}
+	}
+
+	public void changeDirection() {
+		if (direction == 128) {
+			direction = 0;
+		} else {
+			direction = 128;
+		}
 		setSpeed(speed);
 	}
 

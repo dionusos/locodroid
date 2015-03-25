@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
 public class XpressNetRailwayConnection implements RailwayConnection {
@@ -28,6 +30,31 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		locoArressIdentificationMap.put(26, (byte) 0x11);
 		locoArressIdentificationMap.put(27, (byte) 0x12);
 		locoArressIdentificationMap.put(127, (byte) 0x13);
+
+		try {
+			serialPort.addEventListener(new SerialPortEventListener() {
+
+				@Override
+				public void serialEvent(final SerialPortEvent event) {
+					try {
+
+						for (final byte b : serialPort.readBytes()) {
+							System.out.print(b);
+						}
+						System.out.println();
+
+					} catch (final SerialPortException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			});
+		} catch (final SerialPortException e) {
+			System.out
+					.println("ERROR: Unable to add EventListener to SerialPort!");
+			e.printStackTrace();
+		}
 	}
 
 	public void close() {
