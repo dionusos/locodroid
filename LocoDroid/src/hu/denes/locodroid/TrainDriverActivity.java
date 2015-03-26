@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -249,6 +250,36 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(final KeyEvent event) {
+		final int action = event.getAction();
+		final int keyCode = event.getKeyCode();
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_VOLUME_UP:
+			if (action == KeyEvent.ACTION_DOWN) {
+				speedSeekBar.setProgress(speedSeekBar.getProgress() + 1);
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"speed\", \"value\": \""
+						+ speedSeekBar.getProgress() + "\"} }";
+				sendCommand(request);
+			}
+			return true;
+		case KeyEvent.KEYCODE_VOLUME_DOWN:
+			if (action == KeyEvent.ACTION_DOWN) {
+				speedSeekBar.setProgress(speedSeekBar.getProgress() - 1);
+				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+						+ getLocoAddress()
+						+ ",	\"type\": \"speed\", \"value\": \""
+						+ speedSeekBar.getProgress() + "\"} }";
+				sendCommand(request);
+			}
+			return true;
+		default:
+			return super.dispatchKeyEvent(event);
+		}
 	}
 
 	private void sendCommand(final String request) {
