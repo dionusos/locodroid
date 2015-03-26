@@ -103,6 +103,9 @@ public class NetworkConnection {
 			function0.put("type", "answer-get-loco-details");
 			final Loco l0 = storage.getLocoByAddress(Integer
 					.parseInt(jsonObject.getString("value")));
+			if (l0 == null) {
+				break;
+			}
 			final JSONObject jLoco0 = new JSONObject();
 			jLoco0.put("name", l0.getName());
 			jLoco0.put("address", l0.getAddress());
