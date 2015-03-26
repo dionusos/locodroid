@@ -209,11 +209,11 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			public void onClick(final View v) {
 				if (!emergencyStopped) {
 					sendCommand("STOP");
-					stopButton.setText("RESUME");
+					stopButton.setText(R.string.resume);
 					emergencyStopped = true;
 				} else {
 					sendCommand("RESUME");
-					stopButton.setText("STOP");
+					stopButton.setText(R.string.stop);
 					emergencyStopped = false;
 				}
 			}

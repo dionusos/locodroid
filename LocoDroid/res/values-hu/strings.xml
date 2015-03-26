@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">LocoDroid</string>
+    <string name="action_settings">Beállítások</string>
+    <string name="title_activity_train_driver">Mozdonyvezető</string>
+    <string name="title_activity_loco_list">Lista</string>
+    <string name="title_activity_add_new_loco">Új mozdony</string>
+    <string name="hostaddress">HostAddress</string>
+    <string name="title_activity_attach_loco">Mozdony csatolása</string>
+    <string name="name">Név</string>
+    <string name="save">Mentés</string>
+    <string name="address">Cím</string>
+    <string name="attach_other_loco">Csatolás</string>
+    <string name="forward">Előre</string>
+    <string name="stop">Állj</string>
+    <string name="resume">Folytat</string>
+    <string name="add">Hozzáad</string>
+    <string name="max_speed">Max sebesség</string>
+
+</resources>

@@ -56,7 +56,7 @@
             android:layout_alignBaseline="@+id/increaseSpeedButton"
             android:layout_alignBottom="@+id/increaseSpeedButton"
             android:layout_centerHorizontal="true"
-            android:text="Stop" />
+            android:text="@string/stop" />
 
         <Button
             android:id="@+id/decreaseSpeedButton"
@@ -75,7 +75,7 @@
             android:layout_below="@+id/stopButton"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="14dp"
-            android:text="Attach other Loco" />
+            android:text="@string/attach_other_loco" />
 
         <Switch
             android:id="@+id/directionSwitch"
@@ -84,7 +84,7 @@
             android:layout_below="@+id/addRemoteLocoButton"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="42dp"
-            android:text="Forward" />
+            android:text="@string/forward" />
     </RelativeLayout>
 
 </android.support.v4.widget.SwipeRefreshLayout>

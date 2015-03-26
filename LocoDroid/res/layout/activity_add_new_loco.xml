@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Name" />
+        android:text="@string/name" />
 
     <TextView
         android:id="@+id/textView2"
@@ -23,16 +23,7 @@
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
         android:layout_marginTop="30dp"
-        android:text="Address" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="30dp"
-        android:text="Max speed" />
+        android:text="@string/address" />
 
     <Button
         android:id="@+id/saveNewLocoButton"
@@ -41,7 +32,7 @@
         android:layout_alignLeft="@+id/textView3"
         android:layout_below="@+id/textView3"
         android:layout_marginTop="30dp"
-        android:text="Save" />
+        android:text="@string/save" />
 
     <EditText
         android:id="@+id/locoNameEditText"
@@ -64,13 +55,21 @@
         android:hint="Address"
         android:inputType="number" />
 
-    <EditText
-        android:id="@+id/maxSpeedEditText"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/locoAddressEditText"
+        android:layout_alignLeft="@+id/textView2"
         android:layout_below="@+id/locoAddressEditText"
-        android:ems="3"
-        android:inputType="number" />
+        android:layout_marginTop="26dp"
+        android:text="@string/max_speed" />
+
+    <Spinner
+        android:id="@+id/locoSpeedSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/locoAddressEditText"
+        android:layout_below="@+id/locoAddressEditText"
+        android:entries="@array/locoSpeedSpinnerValues" />
 
 </RelativeLayout>

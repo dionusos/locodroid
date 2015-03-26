@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class AddNewLocoActivity extends Activity {
@@ -24,6 +25,7 @@ public class AddNewLocoActivity extends Activity {
 		final Intent i = getIntent();
 		hostAddress = i.getStringExtra("hostAddress");
 		final Context _this = this;
+
 		((Button) findViewById(R.id.saveNewLocoButton))
 		.setOnClickListener(new OnClickListener() {
 
@@ -37,15 +39,15 @@ public class AddNewLocoActivity extends Activity {
 						.getText().toString());
 
 				l.setMaxSpeed(Integer
-						.parseInt(((EditText) findViewById(R.id.maxSpeedEditText))
-								.getText().toString()) - 1);
+						.parseInt(((Spinner) findViewById(R.id.locoSpeedSpinner))
+								.getSelectedItem().toString()) - 1);
 
 				new SaveLocosAsyncTask(hostAddress).execute(l);
 
-						Toast.makeText(getApplicationContext(), "Loco added!",
-								Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Loco added!",
+						Toast.LENGTH_SHORT).show();
 				final Intent i = new Intent(_this,
-								LocoListActivity.class);
+						LocoListActivity.class);
 				i.putExtra("hostAddress", hostAddress);
 				startActivity(i);
 
