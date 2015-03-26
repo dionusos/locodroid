@@ -65,7 +65,8 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public void setSpeed(final int address, final int speed, final int maxSpeed) {
+	public synchronized void setSpeed(final int address, final int speed,
+			final int maxSpeed) {
 		final byte[] bytes = new byte[6];
 
 		bytes[0] = (byte) 0xe4;
@@ -98,7 +99,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public void turnLightsOn(final int address) {
+	public synchronized void turnLightsOn(final int address) {
 		final byte[] bytes = new byte[6];
 
 		bytes[0] = (byte) 228;
@@ -122,7 +123,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public void turnLightsOff(final int address) {
+	public synchronized void turnLightsOff(final int address) {
 		final byte[] bytes = new byte[6];
 
 		bytes[0] = (byte) 228;
@@ -146,19 +147,21 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public void turnFunctionOn(final int address, final int function) {
+	public synchronized void turnFunctionOn(final int address,
+			final int function) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void turnFunctionOff(final int address, final int function) {
+	public synchronized void turnFunctionOff(final int address,
+			final int function) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void stopOperations() {
+	public synchronized void stopOperations() {
 		final byte[] bytes = new byte[3];
 
 		bytes[0] = (byte) 0x21;
@@ -175,7 +178,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public void resumeOperations() {
+	public synchronized void resumeOperations() {
 		final byte[] bytes = new byte[3];
 
 		bytes[0] = (byte) 0x21;
