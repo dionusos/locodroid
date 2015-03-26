@@ -1,9 +1,11 @@
 package hu.denes.command_center;
 
+import hu.denes.command_center.client_connection.Loco;
 import hu.denes.command_center.client_connection.NetworkConnection;
 import hu.denes.command_center.roco_connection.XpressNetRailwayConnection;
 import hu.denes.command_center.storage.Storage;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class CommandCenter {
@@ -35,10 +37,24 @@ public class CommandCenter {
 
 		final Scanner keyboard = new Scanner(System.in);
 		while (true) {
+			System.out.println("exit, remove {loco address}, list");
 			final String in = keyboard.nextLine();
 
 			if ("exit".equals(in)) {
 				break;
+			} else if (in.startsWith("remove")) {
+				final Integer addr = Integer.parseInt(in.split(" ")[1]);
+				if (addr != null) {
+					storage.removeLoco(addr);
+					System.out.println("Loco @" + addr + " removed.");
+				}
+			} else if ("list".equals(in)) {
+				final List<Integer> locoAddrList = storage.getLocoAddresses();
+				for (final Integer a : locoAddrList) {
+					final Loco l = storage.getLocoByAddress(a);
+					System.out.println(l.getName() + "@" + l.getAddress() + ":"
+							+ (1 + l.getMaxSpeed()));
+				}
 			}
 		}
 		networkConnection.stopServer();

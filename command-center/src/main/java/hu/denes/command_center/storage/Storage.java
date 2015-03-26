@@ -27,6 +27,14 @@ public class Storage {
 		this.connection = connection;
 	}
 
+	public void removeLoco(final Integer address) {
+		if (isLocoExistByAddress(address)) {
+			em.getTransaction().begin();
+			em.remove(getLocoByAddress(address));
+			em.getTransaction().commit();
+		}
+	}
+
 	private static String getDir() {
 		return DBASE_DIRECTORY;
 	}
