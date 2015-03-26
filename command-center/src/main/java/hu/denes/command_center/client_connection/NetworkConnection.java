@@ -113,8 +113,6 @@ public class NetworkConnection {
 
 			function0.put("value", jLoco0);
 			jo0.put("function", function0);
-			System.out.println(jo0.toString());
-			System.out.println(ret);
 			ret = jo0.toString();
 			break;
 		case "get-locos":
@@ -132,7 +130,6 @@ public class NetworkConnection {
 			}
 			function.put("value", arr);
 			jo.put("function", function);
-			System.out.println(jo.toString());
 			ret = jo.toString();
 			break;
 		case "get-attached-locos":
@@ -159,12 +156,10 @@ public class NetworkConnection {
 			}
 			function2.put("value", arr2);
 			jo2.put("function", function2);
-			System.out.println(jo2.toString());
 			ret = jo2.toString();
 			break;
 		case "save-loco":
 			final JSONObject jLoco = jsonObject.getJSONObject("value");
-			System.out.println(jLoco.toString());
 			final Loco loco = new Loco(jLoco.getInt("address"),
 					railwayConnection);
 			loco.setName(jLoco.getString("name"));

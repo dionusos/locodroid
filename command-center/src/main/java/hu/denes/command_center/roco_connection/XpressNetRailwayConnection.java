@@ -36,23 +36,22 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 
 				@Override
 				public void serialEvent(final SerialPortEvent event) {
-					try {
-
-						for (final byte b : serialPort.readBytes()) {
-							System.out.print(b);
-						}
-						System.out.println();
-
-					} catch (final SerialPortException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					/*
+					 * try {
+					 * 
+					 * /* for (final byte b : serialPort.readBytes()) {
+					 * System.out.print(b); } System.out.println();
+					 * 
+					 * 
+					 * } catch (final SerialPortException e) { // TODO
+					 * Auto-generated catch block e.printStackTrace(); }
+					 */
 
 				}
 			});
 		} catch (final SerialPortException e) {
 			System.out
-					.println("ERROR: Unable to add EventListener to SerialPort!");
+			.println("ERROR: Unable to add EventListener to SerialPort!");
 			e.printStackTrace();
 		}
 	}
@@ -84,7 +83,6 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		try {
 
 			serialPort.writeBytes(bytes);
-			System.out.println("Speed is set to " + speed + "@" + address);
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
 		}
