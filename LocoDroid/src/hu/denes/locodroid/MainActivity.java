@@ -56,6 +56,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
 				Color.GREEN, Color.BLUE);
+		swipeRefreshLayout.setRefreshing(true);
 		final Context _this = this;
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -83,6 +84,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		adapter = new ControlCenterAdapter();
 		listView.setAdapter(adapter);
 		registerForContextMenu(listView);
+		onRefresh();
 
 	}
 
@@ -159,9 +161,9 @@ public class MainActivity extends Activity implements OnRefreshListener {
 
 	@Override
 	public void onRefresh() {
+		swipeRefreshLayout.setRefreshing(true);
 		adapter.setContext(this);
 		adapter.refresh();
-
 	}
 
 }
