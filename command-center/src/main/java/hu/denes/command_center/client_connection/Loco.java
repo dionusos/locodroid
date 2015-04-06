@@ -97,12 +97,12 @@ public class Loco implements Serializable {
 	}
 
 	public void activateFunction(final String func) {
-		connection.turnFunctionOn(address, functionMap.get(func));
+		connection.turnFunctionOn(address, Integer.parseInt(func));
 		activatedFunctions.add(func);
 	}
 
 	public void deactivateFunction(final String func) {
-		connection.turnFunctionOff(address, functionMap.get(func));
+		connection.turnFunctionOff(address, Integer.parseInt(func));
 		activatedFunctions.remove(func);
 	}
 
