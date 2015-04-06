@@ -18,8 +18,10 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class LocoListActivity extends Activity implements OnRefreshListener {
@@ -79,6 +81,19 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 
 			}
 		});
+		((Button) findViewById(R.id.addLocoButton))
+				.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(final View v) {
+						// TODO Auto-generated method stub
+						final Intent intent = new Intent(_this,
+								AddNewLocoActivity.class);
+						intent.putExtra("hostAddress", controlCenterAddress);
+						intent.putExtra("loco-type", "new-loco");
+						startActivity(intent);
+					}
+				});
 
 		listView.setAdapter(adapter);
 		registerForContextMenu(listView);
@@ -107,13 +122,6 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 		// as you specify a parent activity in AndroidManifest.xml.
 		final int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
-		}
-		if (id == R.id.addNewLocoMenuItem) {
-			final Intent intent = new Intent(this, AddNewLocoActivity.class);
-			intent.putExtra("hostAddress", controlCenterAddress);
-			intent.putExtra("loco-type", "new-loco");
-			startActivity(intent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
