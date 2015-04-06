@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
@@ -129,7 +130,6 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 			@Override
 			public void onStartTrackingTouch(final SeekBar seekBar) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -219,6 +219,31 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			}
 		});
 
+		final LinearLayout functionLayout = (LinearLayout) findViewById(R.id.functionLayout);
+		for (int i = 0; i < 20; ++i) {
+			final Switch functionSwitch = new Switch(_this);
+			functionSwitch.setText("F" + i);
+			functionSwitch
+					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+						@Override
+						public void onCheckedChanged(
+								final CompoundButton buttonView,
+								final boolean isChecked) {
+							final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+									+ getLocoAddress()
+									+ ",	\"type\": \""
+							+ (isChecked ? "function-on"
+									: "function-off")
+									+ "\", \"value\": \""
+									+ functionSwitch.getText().toString()
+											.split("F")[1] + "\" } }";
+							sendCommand(request);
+
+						}
+					});
+			functionLayout.addView(functionSwitch);
+		}
 		onRefresh();
 	}
 
