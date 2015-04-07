@@ -51,7 +51,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 			});
 		} catch (final SerialPortException e) {
 			System.out
-			.println("ERROR: Unable to add EventListener to SerialPort!");
+					.println("ERROR: Unable to add EventListener to SerialPort!");
 			e.printStackTrace();
 		}
 	}
@@ -99,11 +99,13 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 	}
 
 	@Override
-	public synchronized void turnLightsOn(final int address) {
+	public synchronized void switchFunction(final int address,
+			final int function, final int group) {
 		final byte[] bytes = new byte[6];
 
-		bytes[0] = (byte) 228;
-		bytes[1] = (byte) 0x20;
+		bytes[0] = (byte) 0xe4;
+		bytes[1] = (byte) (0x20 + group);
+
 		if (address > 255) {
 			bytes[2] = (byte) (address / 255);
 			bytes[3] = (byte) (address % 255);
@@ -111,7 +113,7 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 			bytes[2] = (byte) 0x00;
 			bytes[3] = (byte) address;
 		}
-		bytes[4] = (byte) 0x10;
+		bytes[4] = (byte) function;
 		bytes[5] = calculateXor(bytes);
 
 		try {
@@ -119,44 +121,6 @@ public class XpressNetRailwayConnection implements RailwayConnection {
 		} catch (final SerialPortException ex) {
 			System.out.println(ex);
 		}
-
-	}
-
-	@Override
-	public synchronized void turnLightsOff(final int address) {
-		final byte[] bytes = new byte[6];
-
-		bytes[0] = (byte) 228;
-		bytes[1] = (byte) 0x20;
-		if (address > 255) {
-			bytes[2] = (byte) (address / 255);
-			bytes[3] = (byte) (address % 255);
-		} else {
-			bytes[2] = (byte) 0x00;
-			bytes[3] = (byte) address;
-		}
-		bytes[4] = (byte) 0;
-		bytes[5] = calculateXor(bytes);
-
-		try {
-			serialPort.writeBytes(bytes);
-		} catch (final SerialPortException ex) {
-			System.out.println(ex);
-		}
-
-	}
-
-	@Override
-	public synchronized void turnFunctionOn(final int address,
-			final int function) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public synchronized void turnFunctionOff(final int address,
-			final int function) {
-		// TODO Auto-generated method stub
 
 	}
 

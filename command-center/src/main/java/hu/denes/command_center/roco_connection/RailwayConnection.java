@@ -4,13 +4,7 @@ public interface RailwayConnection {
 
 	public void setSpeed(int address, int speed, int maxSpeed);
 
-	public void turnLightsOn(int address);
-
-	public void turnLightsOff(int address);
-
-	public void turnFunctionOn(int address, int function);
-
-	public void turnFunctionOff(int address, int function);
+	public void switchFunction(int address, int function, int group);
 
 	public void stopOperations();
 

@@ -29,6 +29,11 @@ public class Loco implements Serializable {
 	private int speed;
 	private int maxSpeed;
 	private boolean lightsOn;
+	private byte[] functionGroups;
+
+	public byte[] getFunctionGroups() {
+		return functionGroups;
+	}
 
 	public boolean isLightsOn() {
 		return lightsOn;
@@ -56,6 +61,7 @@ public class Loco implements Serializable {
 		remoteLocos = new HashSet<Loco>();
 		functionMap = new HashMap<String, Integer>();
 		activatedFunctions = new HashSet<String>();
+		functionGroups = new byte[] { 0, 0, 0 };
 	}
 
 	public Loco() {
@@ -97,12 +103,32 @@ public class Loco implements Serializable {
 	}
 
 	public void activateFunction(final String func) {
-		connection.turnFunctionOn(address, Integer.parseInt(func));
+		byte fnc = Byte.parseByte(func);
+		byte grp = 0;
+		if (fnc > 8) {
+			grp = 2;
+			fnc -= 8;
+		} else if (fnc > 4) {
+			grp = 1;
+			fnc -= 4;
+		}
+		functionGroups[grp] |= (byte) Math.pow(2, (fnc % 5) - 1);
+		connection.switchFunction(address, functionGroups[grp], grp);
 		activatedFunctions.add(func);
 	}
 
 	public void deactivateFunction(final String func) {
-		connection.turnFunctionOff(address, Integer.parseInt(func));
+		byte fnc = Byte.parseByte(func);
+		byte grp = 0;
+		if (fnc > 8) {
+			grp = 2;
+			fnc -= 8;
+		} else if (fnc > 4) {
+			grp = 1;
+			fnc -= 4;
+		}
+		functionGroups[grp] &= (byte) (255 - Math.pow(2, (fnc % 5) - 1));
+		connection.switchFunction(address, functionGroups[grp], grp);
 		activatedFunctions.remove(func);
 	}
 
@@ -110,9 +136,7 @@ public class Loco implements Serializable {
 		this.address = address;
 		this.connection = connection;
 		direction = 128;
-		remoteLocos = new HashSet<Loco>();
-		functionMap = new HashMap<String, Integer>();
-		activatedFunctions = new HashSet<String>();
+		init();
 		maxSpeed = 127;
 		speed = 0;
 		lightsOn = false;
@@ -135,12 +159,14 @@ public class Loco implements Serializable {
 	}
 
 	public void turnLightsOn() {
-		connection.turnLightsOn(address);
+		functionGroups[0] |= (byte) 16;
+		connection.switchFunction(address, functionGroups[0], 0);
 		lightsOn = true;
 	}
 
 	public void turnLightsOff() {
-		connection.turnLightsOff(address);
+		functionGroups[0] &= (byte) (255 - 16);
+		connection.switchFunction(address, functionGroups[0], 0);
 		lightsOn = false;
 	}
 

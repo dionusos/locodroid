@@ -1,6 +1,6 @@
 package hu.denes.command_center.client_connection;
 
-import hu.denes.command_center.roco_connection.PrintoutConnection;
+import hu.denes.command_center.roco_connection.XpressNetRailwayConnection;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +16,7 @@ public class LocoTest {
 	Loco loco;
 
 	@Mock
-	PrintoutConnection mockedConn;
+	XpressNetRailwayConnection mockedConn;
 
 	@Before
 	public void init() {
@@ -80,5 +80,110 @@ public class LocoTest {
 		loco.addRemoteLoco(newLoco);
 		loco.addRemoteLoco(newLoco);
 		Assert.assertEquals(1, loco.getRemoteLocos().size());
+	}
+
+	@Test
+	public void testFunctionGroup1FullOn() {
+		loco.activateFunction("1");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		loco.activateFunction("2");
+		Assert.assertEquals(3, loco.getFunctionGroups()[0]);
+		loco.activateFunction("3");
+		Assert.assertEquals(7, loco.getFunctionGroups()[0]);
+		loco.activateFunction("4");
+		Assert.assertEquals(15, loco.getFunctionGroups()[0]);
+	}
+
+	@Test
+	public void testFunctionGroup1FullOnThenOff() {
+		loco.activateFunction("1");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		loco.activateFunction("2");
+		Assert.assertEquals(3, loco.getFunctionGroups()[0]);
+		loco.activateFunction("3");
+		Assert.assertEquals(7, loco.getFunctionGroups()[0]);
+		loco.activateFunction("4");
+		Assert.assertEquals(15, loco.getFunctionGroups()[0]);
+
+		loco.deactivateFunction("4");
+		Assert.assertEquals(7, loco.getFunctionGroups()[0]);
+		loco.deactivateFunction("3");
+		Assert.assertEquals(3, loco.getFunctionGroups()[0]);
+		loco.deactivateFunction("2");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		loco.deactivateFunction("1");
+		Assert.assertEquals(0, loco.getFunctionGroups()[0]);
+	}
+
+	@Test
+	public void testFunctionGroup2FullOnThenOff() {
+		loco.activateFunction("5");
+		Assert.assertEquals(1, loco.getFunctionGroups()[1]);
+		loco.activateFunction("6");
+		Assert.assertEquals(3, loco.getFunctionGroups()[1]);
+		loco.activateFunction("7");
+		Assert.assertEquals(7, loco.getFunctionGroups()[1]);
+		loco.activateFunction("8");
+		Assert.assertEquals(15, loco.getFunctionGroups()[1]);
+
+		loco.deactivateFunction("8");
+		Assert.assertEquals(7, loco.getFunctionGroups()[1]);
+		loco.deactivateFunction("7");
+		Assert.assertEquals(3, loco.getFunctionGroups()[1]);
+		loco.deactivateFunction("6");
+		Assert.assertEquals(1, loco.getFunctionGroups()[1]);
+		loco.deactivateFunction("5");
+		Assert.assertEquals(0, loco.getFunctionGroups()[1]);
+	}
+
+	@Test
+	public void testFunctionGroup3FullOnThenOff() {
+		loco.activateFunction("9");
+		Assert.assertEquals(1, loco.getFunctionGroups()[2]);
+		loco.activateFunction("10");
+		Assert.assertEquals(3, loco.getFunctionGroups()[2]);
+		loco.activateFunction("11");
+		Assert.assertEquals(7, loco.getFunctionGroups()[2]);
+		loco.activateFunction("12");
+		Assert.assertEquals(15, loco.getFunctionGroups()[2]);
+
+		loco.deactivateFunction("12");
+		Assert.assertEquals(7, loco.getFunctionGroups()[2]);
+		loco.deactivateFunction("11");
+		Assert.assertEquals(3, loco.getFunctionGroups()[2]);
+		loco.deactivateFunction("10");
+		Assert.assertEquals(1, loco.getFunctionGroups()[2]);
+		loco.deactivateFunction("9");
+		Assert.assertEquals(0, loco.getFunctionGroups()[2]);
+	}
+
+	@Test
+	public void testFunctionGroups() {
+		loco.activateFunction("1");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		Assert.assertEquals(0, loco.getFunctionGroups()[1]);
+		Assert.assertEquals(0, loco.getFunctionGroups()[2]);
+		loco.activateFunction("5");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		Assert.assertEquals(1, loco.getFunctionGroups()[1]);
+		Assert.assertEquals(0, loco.getFunctionGroups()[2]);
+		loco.activateFunction("6");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		Assert.assertEquals(3, loco.getFunctionGroups()[1]);
+		Assert.assertEquals(0, loco.getFunctionGroups()[2]);
+		loco.activateFunction("9");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		Assert.assertEquals(3, loco.getFunctionGroups()[1]);
+		Assert.assertEquals(1, loco.getFunctionGroups()[2]);
+	}
+
+	@Test
+	public void testFunctionGroup1AndLights() {
+		loco.activateFunction("1");
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
+		loco.turnLightsOn();
+		Assert.assertEquals(17, loco.getFunctionGroups()[0]);
+		loco.turnLightsOff();
+		Assert.assertEquals(1, loco.getFunctionGroups()[0]);
 	}
 }
