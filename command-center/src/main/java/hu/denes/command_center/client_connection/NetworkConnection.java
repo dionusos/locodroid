@@ -92,31 +92,35 @@ public class NetworkConnection {
 		return ret;
 	}
 
+	private String getLocoDetails(final Integer address) {
+		final JSONObject json = new JSONObject();
+		json.put("target", "client");
+		final JSONObject function = new JSONObject();
+		function.put("type", "answer-get-loco-details");
+		final Loco loco = storage.getLocoByAddress(address);
+		if (loco == null) {
+			return "";
+		}
+		final JSONObject jLoco = new JSONObject();
+		jLoco.put("name", loco.getName());
+		jLoco.put("address", loco.getAddress());
+		jLoco.put("direction", loco.getDirection());
+		jLoco.put("max-speed", loco.getMaxSpeed());
+		jLoco.put("speed", loco.getSpeed());
+		jLoco.put("lightsOn", loco.isLightsOn());
+		jLoco.put("activated-functions", loco.getActivatedFunctions());
+		function.put("value", jLoco);
+		json.put("function", function);
+		return json.toString();
+	}
+
 	private String processCCCommand(final JSONObject jsonObject) {
 		final String query = jsonObject.getString("type");
 		String ret = "";
 		switch (query) {
 		case "get-loco-details":
-			final JSONObject jo0 = new JSONObject();
-			jo0.put("target", "client");
-			final JSONObject function0 = new JSONObject();
-			function0.put("type", "answer-get-loco-details");
-			final Loco l0 = storage.getLocoByAddress(Integer
+			ret = getLocoDetails(Integer
 					.parseInt(jsonObject.getString("value")));
-			if (l0 == null) {
-				break;
-			}
-			final JSONObject jLoco0 = new JSONObject();
-			jLoco0.put("name", l0.getName());
-			jLoco0.put("address", l0.getAddress());
-			jLoco0.put("direction", l0.getDirection());
-			jLoco0.put("max-speed", l0.getMaxSpeed());
-			jLoco0.put("speed", l0.getSpeed());
-			jLoco0.put("lightsOn", l0.isLightsOn());
-
-			function0.put("value", jLoco0);
-			jo0.put("function", function0);
-			ret = jo0.toString();
 			break;
 		case "get-locos":
 			final JSONObject jo = new JSONObject();
@@ -126,6 +130,9 @@ public class NetworkConnection {
 			function.put("type", "answer-get-locos");
 			for (final Integer addr : storage.getLocoAddresses()) {
 				final Loco l = storage.getLocoByAddress(addr);
+				if (l == null) {
+					continue;
+				}
 				final JSONObject jLoco = new JSONObject();
 				jLoco.put("name", l.getName());
 				jLoco.put("address", l.getAddress());
