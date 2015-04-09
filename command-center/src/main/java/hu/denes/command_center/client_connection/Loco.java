@@ -4,13 +4,9 @@ import hu.denes.command_center.roco_connection.RailwayConnection;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,9 +22,10 @@ public class Loco implements Serializable {
 	private Integer address;
 	private String name;
 	private int direction;
+	@Transient
 	private int speed;
 	private int maxSpeed;
-	private boolean lightsOn;
+	@Transient
 	private byte[] functionGroups;
 
 	public byte[] getFunctionGroups() {
@@ -36,19 +33,15 @@ public class Loco implements Serializable {
 	}
 
 	public boolean isLightsOn() {
-		return lightsOn;
+		return (functionGroups[0] & 16) > 0;
 	}
 
-	public void setLightsOn(final boolean lightsOn) {
-		this.lightsOn = lightsOn;
-	}
-
-	@Transient
-	private Map<String, Integer> functionMap;
 	@Transient
 	private Set<String> activatedFunctions;
-	@ElementCollection
-	@Column(name = "remote_locos")
+	// @ElementCollection
+	// @CollectionTable(name = "REMOTE_LOCO", joinColumns = @JoinColumn(name =
+	// "ID"))
+	@Transient
 	private Set<Loco> remoteLocos;
 	@Transient
 	private RailwayConnection connection;
@@ -57,9 +50,19 @@ public class Loco implements Serializable {
 		connection = c;
 	}
 
+	public String getActivatedFunctions() {
+		final StringBuilder ret = new StringBuilder();
+		for (final String f : activatedFunctions) {
+			ret.append(f + ",");
+		}
+		if (ret.length() > 0) {
+			ret.deleteCharAt(ret.length() - 1);
+		}
+		return ret.toString();
+	}
+
 	private void init() {
 		remoteLocos = new HashSet<Loco>();
-		functionMap = new HashMap<String, Integer>();
 		activatedFunctions = new HashSet<String>();
 		functionGroups = new byte[] { 0, 0, 0 };
 	}
@@ -139,11 +142,17 @@ public class Loco implements Serializable {
 		init();
 		maxSpeed = 127;
 		speed = 0;
-		lightsOn = false;
 	}
 
-	public void addFunction(final String function, final Integer val) {
-		functionMap.put(function, val);
+	public Loco(final Integer address, final String name, final int maxSpeed,
+			final RailwayConnection connection) {
+		this.address = address;
+		this.name = name;
+		this.connection = connection;
+		direction = 128;
+		init();
+		this.maxSpeed = maxSpeed - 1;
+		speed = 0;
 	}
 
 	public Integer getAddress() {
@@ -161,13 +170,11 @@ public class Loco implements Serializable {
 	public void turnLightsOn() {
 		functionGroups[0] |= (byte) 16;
 		connection.switchFunction(address, functionGroups[0], 0);
-		lightsOn = true;
 	}
 
 	public void turnLightsOff() {
 		functionGroups[0] &= (byte) (255 - 16);
 		connection.switchFunction(address, functionGroups[0], 0);
-		lightsOn = false;
 	}
 
 	public void setSpeed(final int speed) {
