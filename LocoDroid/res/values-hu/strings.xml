@@ -17,5 +17,6 @@
     <string name="resume">Folytat</string>
     <string name="add">Hozzáad</string>
     <string name="max_speed">Max sebesség</string>
+    <string name="exit">Kilépés</string>
 
 </resources>

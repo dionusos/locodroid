@@ -127,6 +127,11 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		final int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.exit) {
+			final Intent i = new Intent(this, NetworkCommunicationService.class);
+			stopService(i);
+			System.exit(0);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

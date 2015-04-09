@@ -17,5 +17,6 @@
     <string name="resume">Resume</string>
     <string name="add">Add</string>
     <string name="max_speed">Max speed</string>
+    <string name="exit">Exit</string>
 
 </resources>
