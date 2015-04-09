@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
@@ -76,6 +77,9 @@ public class Storage {
 			l = (Loco) q.getSingleResult();
 			l.setRailwayConnection(connection);
 		} catch (final NoResultException nre) {
+			l = null;
+		} catch (final NonUniqueResultException e) {
+			System.out.println("More than one loco have address " + address);
 			l = null;
 		}
 		return l;
