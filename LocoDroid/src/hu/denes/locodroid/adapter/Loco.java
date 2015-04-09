@@ -1,6 +1,8 @@
 package hu.denes.locodroid.adapter;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Loco implements Serializable {
 	/**
@@ -40,6 +42,7 @@ public class Loco implements Serializable {
 
 	public Loco(final Integer address) {
 		this.address = address;
+		activatedFunctions = new HashSet<String>();
 	}
 
 	private boolean ticked;
@@ -78,6 +81,19 @@ public class Loco implements Serializable {
 
 	public void setDirection(final int direction) {
 		this.direction = direction;
+	}
+
+	private final Set<String> activatedFunctions;
+
+	public void setActivatedFunctions(final String functions) {
+		activatedFunctions.clear();
+		for (final String f : functions.split(",")) {
+			activatedFunctions.add(f);
+		}
+	}
+
+	public Set<String> getActivatedFunctions() {
+		return activatedFunctions;
 	}
 
 }

@@ -155,6 +155,8 @@ public class NetworkCommunicationService extends Service {
 								loco.setSpeed(jLoco.getInt("speed"));
 								loco.setMaxSpeed(jLoco.getInt("max-speed"));
 								loco.setDirection(jLoco.getInt("direction"));
+								loco.setActivatedFunctions(jLoco
+										.getString("activated-functions"));
 								final Intent i = new Intent(
 										"LOCO_DETAILS_RECEIVED");
 								Globals.GLOBAL_LOCO_MAP.put(loco.getAddress(),

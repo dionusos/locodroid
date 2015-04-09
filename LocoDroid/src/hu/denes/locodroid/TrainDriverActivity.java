@@ -2,6 +2,10 @@ package hu.denes.locodroid;
 
 import hu.denes.locodroid.adapter.Loco;
 import hu.denes.locodroid.async.SendCommandAsyncTask;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,6 +39,7 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 	private boolean emergencyStopped = false;
 	private SeekBar speedSeekBar;
 	private Switch sw;
+	private Map<String, Switch> functionSwitchMapByNumber;
 
 	private ToggleButton lightButton;
 
@@ -59,6 +64,13 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			speedSeekBar.setProgress(l.getSpeed());
 			sw.setChecked(l.getDirection() == 128);
 			lightButton.setChecked(l.isLightsOn());
+			for (final String f : l.getActivatedFunctions()) {
+				final Switch s = functionSwitchMapByNumber.get(f);
+				if (s != null) {
+					s.setChecked(true);
+
+				}
+			}
 			swipeRefreshLayout.setRefreshing(false);
 		}
 
@@ -78,6 +90,7 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 		locoName = intent.getStringExtra("locoName");
 		final Context _this = this;
 
+		functionSwitchMapByNumber = new HashMap<String, Switch>();
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshTrainDriver);
 		swipeRefreshLayout.setDistanceToTriggerSync(500);
 		swipeRefreshLayout.setOnRefreshListener(this);
@@ -220,28 +233,29 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 		});
 
 		final LinearLayout functionLayout = (LinearLayout) findViewById(R.id.functionLayout);
-		for (int i = 0; i < 20; ++i) {
+		for (int i = 1; i < 13; ++i) {
 			final Switch functionSwitch = new Switch(_this);
+			functionSwitchMapByNumber.put("" + i, functionSwitch);
 			functionSwitch.setText("F" + i);
 			functionSwitch
-					.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-						@Override
-						public void onCheckedChanged(
-								final CompoundButton buttonView,
-								final boolean isChecked) {
-							final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-									+ getLocoAddress()
-									+ ",	\"type\": \""
-							+ (isChecked ? "function-on"
-									: "function-off")
+				@Override
+				public void onCheckedChanged(
+						final CompoundButton buttonView,
+						final boolean isChecked) {
+					final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+							+ getLocoAddress()
+							+ ",	\"type\": \""
+									+ (isChecked ? "function-on"
+											: "function-off")
 									+ "\", \"value\": \""
 									+ functionSwitch.getText().toString()
-											.split("F")[1] + "\" } }";
-							sendCommand(request);
+									.split("F")[1] + "\" } }";
+					sendCommand(request);
 
-						}
-					});
+				}
+			});
 			functionLayout.addView(functionSwitch);
 		}
 		onRefresh();
