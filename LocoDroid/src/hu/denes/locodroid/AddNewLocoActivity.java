@@ -46,10 +46,7 @@ public class AddNewLocoActivity extends Activity {
 
 				Toast.makeText(getApplicationContext(), "Loco added!",
 						Toast.LENGTH_SHORT).show();
-				final Intent i = new Intent(_this,
-						LocoListActivity.class);
-				i.putExtra("hostAddress", hostAddress);
-				startActivity(i);
+				finish();
 
 			}
 		});
@@ -68,9 +65,7 @@ public class AddNewLocoActivity extends Activity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		final int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+
 		return super.onOptionsItemSelected(item);
 	}
 }

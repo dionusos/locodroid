@@ -5,6 +5,7 @@ import hu.denes.locodroid.Globals;
 import hu.denes.locodroid.adapter.Loco;
 import hu.denes.locodroid.async.SendCommandAsyncTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -23,10 +24,12 @@ import android.util.Log;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
 
 public class NetworkCommunicationService extends Service {
 
 	Client client;
+	Server server;
 	String hostAddress;
 	Context _this;
 
@@ -89,7 +92,14 @@ public class NetworkCommunicationService extends Service {
 			hostAddress = "127.0.0.1";
 		}
 		client = ClientSingleton.getInstance().getClient();
+		server = ClientSingleton.getInstance().getServer();
 		client.start();
+		try {
+			server.bind(54556, 54778);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		server.start();
 		_this = this;
 		client.addListener(new Listener() {
 			@Override
@@ -122,7 +132,7 @@ public class NetworkCommunicationService extends Service {
 								Globals.GLOBAL_LOCO_LIST = locos;
 								i.putExtra("locoList", "globals");
 								LocalBroadcastManager.getInstance(_this)
-										.sendBroadcast(i);
+								.sendBroadcast(i);
 							} else if ("answer-get-attached-locos"
 									.equals(function.get("type"))) {
 								final ArrayList<Loco> locos = new ArrayList<Loco>();
@@ -142,7 +152,7 @@ public class NetworkCommunicationService extends Service {
 								Globals.GLOBAL_LOCO_LIST = locos;
 								i.putExtra("locoList", "globals");
 								LocalBroadcastManager.getInstance(_this)
-										.sendBroadcast(i);
+								.sendBroadcast(i);
 							} else if ("answer-get-loco-details"
 									.equals(function.get("type"))) {
 								final JSONObject jLoco = function
@@ -163,7 +173,7 @@ public class NetworkCommunicationService extends Service {
 										loco);
 								i.putExtra("locoAddress", loco.getAddress());
 								LocalBroadcastManager.getInstance(_this)
-										.sendBroadcast(i);
+								.sendBroadcast(i);
 							}
 						}
 					} catch (final JSONException e) {
@@ -173,12 +183,25 @@ public class NetworkCommunicationService extends Service {
 				}
 			}
 		});
+		server.addListener(new Listener() {
+			@Override
+			public void received(final Connection connection,
+					final Object object) {
+				if (object instanceof String) {
+					final Intent i = new Intent("SERVER_MESSAGE_RECEIVED");
+					final String request = (String) object;
+					i.putExtra("message", request);
+					LocalBroadcastManager.getInstance(_this).sendBroadcast(i);
+				}
+			}
+		});
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
 	public void onDestroy() {
 		client.stop();
+		server.stop();
 		super.onDestroy();
 	}
 

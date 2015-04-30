@@ -49,13 +49,13 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		setContentView(R.layout.list_command_center);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-				new IntentFilter("NETWORK-DISCOVERED"));
+		        new IntentFilter("NETWORK-DISCOVERED"));
 
 		listView = (ListView) findViewById(R.id.list);
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshCommandCenterList);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
-				Color.GREEN, Color.BLUE);
+		        Color.GREEN, Color.BLUE);
 		swipeRefreshLayout.setRefreshing(true);
 		final Context _this = this;
 
@@ -63,12 +63,12 @@ public class MainActivity extends Activity implements OnRefreshListener {
 
 			@Override
 			public void onItemClick(final AdapterView<?> parent,
-					final View view, final int position, final long id) {
+			        final View view, final int position, final long id) {
 				final String hostAddress = ((String) ((ControlCenterAdapter) listView
-						.getAdapter()).getItem(position));
+				        .getAdapter()).getItem(position));
 				// create service
 				final Intent i = new Intent(_this.getApplicationContext(),
-						NetworkCommunicationService.class);
+				        NetworkCommunicationService.class);
 				i.putExtra("serverAddress", hostAddress);
 				startService(i);
 
@@ -125,9 +125,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		final int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		} else if (id == R.id.exit) {
+		if (id == R.id.exit) {
 			final Intent i = new Intent(this, NetworkCommunicationService.class);
 			stopService(i);
 			System.exit(0);
@@ -139,11 +137,11 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-				.getMenuInfo();
+		        .getMenuInfo();
 		final int menuItemIndex = item.getItemId();
 		if (menuItemIndex == 0) {
 			final String hostAddress = ((String) ((ControlCenterAdapter) listView
-					.getAdapter()).getItem(info.position));
+			        .getAdapter()).getItem(info.position));
 
 			final Intent intent = new Intent(this, LocoListActivity.class);
 			intent.putExtra("hostAddress", hostAddress);

@@ -29,6 +29,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class TrainDriverActivity extends Activity implements OnRefreshListener {
@@ -76,6 +77,20 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 	};
 
+	BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(final Context ctx, final Intent intent) {
+			if (intent == null) {
+				return;
+			}
+			Toast.makeText(ctx, intent.getStringExtra("message"),
+					Toast.LENGTH_LONG).show();
+
+		}
+
+	};
+
 	private int getLocoAddress() {
 		return locoAddress;
 	}
@@ -95,10 +110,12 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 		swipeRefreshLayout.setDistanceToTriggerSync(500);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
-				Color.GREEN, Color.BLUE);
+		        Color.GREEN, Color.BLUE);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-				new IntentFilter("LOCO_DETAILS_RECEIVED"));
+		        new IntentFilter("LOCO_DETAILS_RECEIVED"));
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				messageReceiver, new IntentFilter("SERVER_MESSAGE_RECEIVED"));
 
 		final TextView tv = (TextView) findViewById(R.id.locoAddressTextView);
 		tv.setText(locoName + "@" + locoAddress);
@@ -107,17 +124,17 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView,
-					final boolean isChecked) {
+			        final boolean isChecked) {
 
 				String request = "";
 				if (isChecked) {
 					request = "{\"target\": \"loco\",\"function\": {\"address\": "
-							+ getLocoAddress()
-							+ ",	\"type\": \"lights\", \"value\": \"on\"} }";
+					        + getLocoAddress()
+					        + ",	\"type\": \"lights\", \"value\": \"on\"} }";
 				} else {
 					request = "{\"target\": \"loco\",\"function\": {\"address\": "
-							+ getLocoAddress()
-							+ ",	\"type\": \"lights\", \"value\": \"off\"}}";
+					        + getLocoAddress()
+					        + ",	\"type\": \"lights\", \"value\": \"off\"}}";
 
 				}
 				sendCommand(request);
@@ -134,9 +151,9 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			@Override
 			public void onStopTrackingTouch(final SeekBar seekBar) {
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"speed\", \"value\": \""
-						+ seekBar.getProgress() + "\"} }";
+				        + getLocoAddress()
+				        + ",	\"type\": \"speed\", \"value\": \""
+				        + seekBar.getProgress() + "\"} }";
 				sendCommand(request);
 
 			}
@@ -148,7 +165,7 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 			@Override
 			public void onProgressChanged(final SeekBar seekBar,
-					final int progress, final boolean fromUser) {
+			        final int progress, final boolean fromUser) {
 
 			}
 		});
@@ -178,11 +195,11 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView,
-					final boolean isChecked) {
+			        final boolean isChecked) {
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"direction\", \"value\": \""
-						+ (isChecked ? "forward" : "backward") + "\"} }";
+				        + getLocoAddress()
+				        + ",	\"type\": \"direction\", \"value\": \""
+				        + (isChecked ? "forward" : "backward") + "\"} }";
 				sendCommand(request);
 
 			}
@@ -195,9 +212,9 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			public void onClick(final View v) {
 				speedSeekBar.setProgress(speedSeekBar.getProgress() - 1);
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"speed\", \"value\": \""
-						+ speedSeekBar.getProgress() + "\"} }";
+				        + getLocoAddress()
+				        + ",	\"type\": \"speed\", \"value\": \""
+				        + speedSeekBar.getProgress() + "\"} }";
 				sendCommand(request);
 
 			}
@@ -209,9 +226,9 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			public void onClick(final View v) {
 				speedSeekBar.setProgress(speedSeekBar.getProgress() + 1);
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"speed\", \"value\": \""
-						+ speedSeekBar.getProgress() + "\"} }";
+				        + getLocoAddress()
+				        + ",	\"type\": \"speed\", \"value\": \""
+				        + speedSeekBar.getProgress() + "\"} }";
 				sendCommand(request);
 			}
 		});
@@ -238,24 +255,24 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			functionSwitchMapByNumber.put("" + i, functionSwitch);
 			functionSwitch.setText("F" + i);
 			functionSwitch
-			.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			        .setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-				@Override
-				public void onCheckedChanged(
-						final CompoundButton buttonView,
-						final boolean isChecked) {
-					final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-							+ getLocoAddress()
-							+ ",	\"type\": \""
-									+ (isChecked ? "function-on"
-											: "function-off")
-									+ "\", \"value\": \""
-									+ functionSwitch.getText().toString()
-									.split("F")[1] + "\" } }";
-					sendCommand(request);
+				        @Override
+				        public void onCheckedChanged(
+				                final CompoundButton buttonView,
+				                final boolean isChecked) {
+					        final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
+					                + getLocoAddress()
+					                + ",	\"type\": \""
+					                + (isChecked ? "function-on"
+					                        : "function-off")
+					                + "\", \"value\": \""
+					                + functionSwitch.getText().toString()
+					                        .split("F")[1] + "\" } }";
+					        sendCommand(request);
 
-				}
-			});
+				        }
+			        });
 			functionLayout.addView(functionSwitch);
 		}
 		onRefresh();
@@ -285,9 +302,7 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		final int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -300,9 +315,9 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			if (action == KeyEvent.ACTION_DOWN) {
 				speedSeekBar.setProgress(speedSeekBar.getProgress() + 1);
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"speed\", \"value\": \""
-						+ speedSeekBar.getProgress() + "\"} }";
+				        + getLocoAddress()
+				        + ",	\"type\": \"speed\", \"value\": \""
+				        + speedSeekBar.getProgress() + "\"} }";
 				sendCommand(request);
 			}
 			return true;
@@ -310,9 +325,9 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 			if (action == KeyEvent.ACTION_DOWN) {
 				speedSeekBar.setProgress(speedSeekBar.getProgress() - 1);
 				final String request = "{\"target\": \"loco\",\"function\": {\"address\": "
-						+ getLocoAddress()
-						+ ",	\"type\": \"speed\", \"value\": \""
-						+ speedSeekBar.getProgress() + "\"} }";
+				        + getLocoAddress()
+				        + ",	\"type\": \"speed\", \"value\": \""
+				        + speedSeekBar.getProgress() + "\"} }";
 				sendCommand(request);
 			}
 			return true;
