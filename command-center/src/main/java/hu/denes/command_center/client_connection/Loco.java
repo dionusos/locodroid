@@ -27,6 +27,19 @@ public class Loco implements Serializable {
 	private int maxSpeed;
 	@Transient
 	private byte[] functionGroups;
+	@Transient
+	private String lastControllerIP = "";
+
+	public String getLastControllerIP() {
+		return lastControllerIP;
+	}
+
+	public void setLastControllerIP(final String lastControllerIP) {
+		this.lastControllerIP = lastControllerIP;
+		for (final Loco l : remoteLocos) {
+			l.setLastControllerIP(lastControllerIP);
+		}
+	}
 
 	public byte[] getFunctionGroups() {
 		return functionGroups;
@@ -84,16 +97,13 @@ public class Loco implements Serializable {
 	}
 
 	public void setDirection(final int dir) {
-		final int oldDir = this.direction;
-		this.direction = dir;
-		final int newDir = this.direction;
-		setSpeed(speed);
-
-		if (oldDir != newDir) {
+		if (this.direction != dir) {
 			for (final Loco l : remoteLocos) {
 				l.changeDirection();
 			}
 		}
+		this.direction = dir;
+		setSpeed(speed);
 	}
 
 	public void changeDirection() {
@@ -115,7 +125,7 @@ public class Loco implements Serializable {
 			grp = 1;
 			fnc -= 4;
 		}
-		functionGroups[grp] |= (byte) Math.pow(2, (fnc % 5) - 1);
+		functionGroups[grp] |= (byte) (1 << (fnc - 1));
 		connection.switchFunction(address, functionGroups[grp], grp);
 		activatedFunctions.add(func);
 	}
@@ -130,7 +140,7 @@ public class Loco implements Serializable {
 			grp = 1;
 			fnc -= 4;
 		}
-		functionGroups[grp] &= (byte) (255 - Math.pow(2, (fnc % 5) - 1));
+		functionGroups[grp] &= (byte) (255 - (1 << (fnc - 1)));
 		connection.switchFunction(address, functionGroups[grp], grp);
 		activatedFunctions.remove(func);
 	}

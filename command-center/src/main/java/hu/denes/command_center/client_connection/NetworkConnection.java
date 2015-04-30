@@ -8,14 +8,15 @@ import java.io.IOException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
 public class NetworkConnection {
-	// private final Map<Integer, Loco> storage;
 	private final Storage storage;
 	private Server server;
+	Client client;
 	private final RailwayConnection railwayConnection;
 
 	public void startServer(final int tcpPort, final int udpPort) {
@@ -24,7 +25,7 @@ public class NetworkConnection {
 			server = null;
 		}
 		server = new Server();
-		System.out.println("Server started!");
+		client = new Client();
 
 		try {
 			server.bind(tcpPort, udpPort);
@@ -33,7 +34,21 @@ public class NetworkConnection {
 			e.printStackTrace();
 		}
 		server.start();
+		client.start();
+		System.out.println("Server started!");
 		addListenerToServer();
+	}
+
+	public synchronized void controlIsOvertakenByMultiMaus(final int address,
+			final String info) {
+		final Loco l = storage.getLocoByAddress(address);
+		if (l.getLastControllerIP() == "") {
+			return;
+		}
+		new ClientMessageSenderThread(client, l.getLastControllerIP(), info)
+		.start();
+
+		l.setLastControllerIP("");
 	}
 
 	private void addListenerToServer() {
@@ -50,7 +65,9 @@ public class NetworkConnection {
 						resumeOperations();
 						return;
 					}
-					final String response = processJson(request);
+					final String response = processJson(request, connection
+							.getRemoteAddressTCP().getAddress()
+					        .getHostAddress());
 					connection.sendTCP(response);
 				}
 			}
@@ -74,15 +91,14 @@ public class NetworkConnection {
 
 	public void stopServer() {
 		server.stop();
-
 	}
 
-	private String processJson(final String request) {
+	private String processJson(final String request, final String clientIP) {
 		String ret = "";
 		final JSONObject jo = new JSONObject(request);
 		switch (jo.getString("target")) {
 		case "loco":
-			ret = processLoco(jo.getJSONObject("function"));
+			ret = processLoco(jo.getJSONObject("function"), clientIP);
 			break;
 
 		case "command-center":
@@ -92,7 +108,7 @@ public class NetworkConnection {
 		return ret;
 	}
 
-	private String getLocoDetails(final Integer address) {
+	protected String getLocoDetails(final Integer address) {
 		final JSONObject json = new JSONObject();
 		json.put("target", "client");
 		final JSONObject function = new JSONObject();
@@ -114,6 +130,53 @@ public class NetworkConnection {
 		return json.toString();
 	}
 
+	private String getLocos() {
+		final JSONObject jsonObj = new JSONObject();
+		jsonObj.put("target", "client");
+		final JSONObject function = new JSONObject();
+		final JSONArray jLocoArray = new JSONArray();
+		function.put("type", "answer-get-locos");
+		for (final Integer addr : storage.getLocoAddresses()) {
+			final Loco l = storage.getLocoByAddress(addr);
+			if (l == null) {
+				continue;
+			}
+			final JSONObject jLoco = new JSONObject();
+			jLoco.put("name", l.getName());
+			jLoco.put("address", l.getAddress());
+			jLocoArray.put(jLoco);
+		}
+		function.put("value", jLocoArray);
+		jsonObj.put("function", function);
+		return jsonObj.toString();
+	}
+
+	private String getAttachedLocos(final Integer address) {
+		final JSONObject jsonObject = new JSONObject();
+		jsonObject.put("target", "client");
+		final JSONObject function = new JSONObject();
+		final JSONArray jLocoArray = new JSONArray();
+		function.put("type", "answer-get-attached-locos");
+		final Loco drivenLoco = storage.getLocoByAddress(address);
+		for (final Integer addr : storage.getLocoAddresses()) {
+			final Loco l = storage.getLocoByAddress(addr);
+			if (addr == drivenLoco.getAddress()) {
+				continue;
+			}
+			final JSONObject jLoco = new JSONObject();
+			jLoco.put("name", l.getName());
+			jLoco.put("address", l.getAddress());
+			jLoco.put(
+					"attached",
+					drivenLoco.getRemoteLocos().contains(
+							storage.getLocoByAddress(addr)) ? true : false);
+			jLocoArray.put(jLoco);
+		}
+		function.put("value", jLocoArray);
+		jsonObject.put("function", function);
+		return jsonObject.toString();
+	}
+
 	private String processCCCommand(final JSONObject jsonObject) {
 		final String query = jsonObject.getString("type");
 		String ret = "";
@@ -123,50 +186,10 @@ public class NetworkConnection {
 					.parseInt(jsonObject.getString("value")));
 			break;
 		case "get-locos":
-			final JSONObject jo = new JSONObject();
-			jo.put("target", "client");
-			final JSONObject function = new JSONObject();
-			final JSONArray arr = new JSONArray();
-			function.put("type", "answer-get-locos");
-			for (final Integer addr : storage.getLocoAddresses()) {
-				final Loco l = storage.getLocoByAddress(addr);
-				if (l == null) {
-					continue;
-				}
-				final JSONObject jLoco = new JSONObject();
-				jLoco.put("name", l.getName());
-				jLoco.put("address", l.getAddress());
-				arr.put(jLoco);
-			}
-			function.put("value", arr);
-			jo.put("function", function);
-			ret = jo.toString();
+			ret = getLocos();
 			break;
 		case "get-attached-locos":
-			final JSONObject jo2 = new JSONObject();
-			jo2.put("target", "client");
-			final JSONObject function2 = new JSONObject();
-			final JSONArray arr2 = new JSONArray();
-			function2.put("type", "answer-get-attached-locos");
-			final Loco drivenLoco = storage.getLocoByAddress(jsonObject
-					.getInt("value"));
-			for (final Integer addr : storage.getLocoAddresses()) {
-				final Loco l = storage.getLocoByAddress(addr);
-				if (addr == drivenLoco.getAddress()) {
-					continue;
-				}
-				final JSONObject jLoco = new JSONObject();
-				jLoco.put("name", l.getName());
-				jLoco.put("address", l.getAddress());
-				jLoco.put(
-						"attached",
-						drivenLoco.getRemoteLocos().contains(
-								storage.getLocoByAddress(addr)) ? true : false);
-				arr2.put(jLoco);
-			}
-			function2.put("value", arr2);
-			jo2.put("function", function2);
-			ret = jo2.toString();
+			ret = getAttachedLocos(jsonObject.getInt("value"));
 			break;
 		case "save-loco":
 			final JSONObject jLoco = jsonObject.getJSONObject("value");
@@ -180,7 +203,6 @@ public class NetworkConnection {
 			} else {
 				ret = "ERROR!";
 			}
-
 			break;
 
 		default:
@@ -188,53 +210,66 @@ public class NetworkConnection {
 		}
 
 		return ret;
-
 	}
 
-	private String processLoco(final JSONObject o) {
+	private String processLoco(final JSONObject o, final String clientIP) {
 		final String value = o.getString("value");
 		final Integer address = o.getInt("address");
 		final String ret = "";
 		if (!storage.isLocoExistByAddress(address)) {
 			return ret;
 		}
+		final Loco l = storage.getLocoByAddress(address);
 		switch (o.getString("type")) {
 		case "lights":
 			if ("on".equals(value)) {
-				storage.getLocoByAddress(address).turnLightsOn();
+				l.turnLightsOn();
 			} else if ("off".equals(value)) {
-				storage.getLocoByAddress(address).turnLightsOff();
+				l.turnLightsOff();
 			}
 			break;
 		case "speed":
-			storage.getLocoByAddress(address).setSpeed(Integer.parseInt(value));
+			l.setSpeed(Integer.parseInt(value));
 			break;
 		case "direction":
-			storage.getLocoByAddress(address).setDirection(
-					"forward".equals(value) ? 128 : 0);
+			l.setDirection("forward".equals(value) ? 128 : 0);
 			break;
 		case "function-on":
-			storage.getLocoByAddress(address).activateFunction(value);
+			l.activateFunction(value);
 			break;
 		case "function-off":
-			storage.getLocoByAddress(address).deactivateFunction(value);
+			l.deactivateFunction(value);
 			break;
 		case "add-loco-to-train":
 			if (!storage.isLocoExistByAddress(Integer.parseInt(value))) {
 				return "";
 			}
-			storage.getLocoByAddress(address).addRemoteLoco(
-					storage.getLocoByAddress(Integer.parseInt(value)));
+			final Loco remoteLoco = storage.getLocoByAddress(Integer
+			        .parseInt(value));
+			l.addRemoteLoco(remoteLoco);
+			controlIsOvertakenByMultiMaus(remoteLoco.getAddress(),
+			        "Control is overtaken by another controller");
+			remoteLoco.setLastControllerIP(clientIP);
 			removeSelfLocoFromRemote(value, address);
 			break;
 		case "remove-loco-from-train":
 			if (!storage.isLocoExistByAddress(Integer.parseInt(value))) {
 				return "";
 			}
-			storage.getLocoByAddress(address).removeRemoteLoco(
-					storage.getLocoByAddress(Integer.parseInt(value)));
+			final Loco remoteLoco2 = storage.getLocoByAddress(Integer
+			        .parseInt(value));
+			remoteLoco2.setLastControllerIP("");
+			l.removeRemoteLoco(remoteLoco2);
 			break;
+		default:
+			return ret;
 		}
+		final String oldIP = l.getLastControllerIP();
+		if (!oldIP.equals(clientIP)) {
+			controlIsOvertakenByMultiMaus(l.getAddress(),
+			        "Control is overtaken by another controller");
+		}
+		l.setLastControllerIP(clientIP);
 		return ret;
 	}
 

@@ -25,18 +25,19 @@ public class CommandCenter {
 		final String serialTerminalName = args[2];
 
 		final XpressNetRailwayConnection railwayConnection = new XpressNetRailwayConnection(
-				serialTerminalName);
+		        serialTerminalName);
 		final Storage storage = new Storage(railwayConnection);
 		storage.initDB();
 		System.out.println(storage.getLocoAddresses());
 		final NetworkConnection networkConnection = new NetworkConnection(
-				storage, railwayConnection);
+		        storage, railwayConnection);
 		networkConnection.startServer(tcpPort, udpPort);
+		railwayConnection.setNetworkConnection(networkConnection);
 
 		final Scanner keyboard = new Scanner(System.in);
 		while (true) {
 			System.out
-			.println("exit, remove {loco address}, list, save {filename}, load {filename}");
+			        .println("exit, remove {loco address}, list, save {filename}, load {filename}");
 			final String in = keyboard.nextLine();
 
 			if ("exit".equals(in)) {
@@ -53,7 +54,7 @@ public class CommandCenter {
 					final Loco l = storage.getLocoByAddress(a);
 					if (l != null) {
 						System.out.println(l.getName() + "@" + l.getAddress()
-								+ ":" + (1 + l.getMaxSpeed()));
+						        + ":" + (1 + l.getMaxSpeed()));
 					}
 				}
 
@@ -72,13 +73,13 @@ public class CommandCenter {
 					for (final Integer a : locoAddrList) {
 						final Loco l = storage.getLocoByAddress(a);
 						final String line = l.getAddress() + "," + l.getName()
-								+ "," + (1 + l.getMaxSpeed());
+						        + "," + (1 + l.getMaxSpeed());
 						w.println(line);
 					}
 					System.out.println("INFO: Locos saved successful!");
 				} catch (final FileNotFoundException ex) {
 					System.out
-					.println("WARNING: There is a problem with that file!");
+					        .println("WARNING: There is a problem with that file!");
 					continue;
 				}
 
@@ -89,18 +90,18 @@ public class CommandCenter {
 				}
 				final String fileName = in.split(" ")[1];
 				try (BufferedReader br = new BufferedReader(new FileReader(
-						fileName))) {
+				        fileName))) {
 					String line;
 					while ((line = br.readLine()) != null) {
 						final String[] loco = line.split(",");
 						if (storage.getLocoByAddress(Integer.parseInt(loco[0])) == null) {
 							storage.addLoco(new Loco(Integer.parseInt(loco[0]),
-									loco[1], Integer.parseInt(loco[2]),
-									railwayConnection));
+							        loco[1], Integer.parseInt(loco[2]),
+							        railwayConnection));
 						} else {
 							System.out
-							.println("WARNING: Loco exists with address "
-									+ loco[0]);
+							        .println("WARNING: Loco exists with address "
+							                + loco[0]);
 						}
 					}
 					System.out.println("INFO: Locos loaded successful!");

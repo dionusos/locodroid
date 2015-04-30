@@ -69,6 +69,24 @@ public class LocoTest {
 	}
 
 	@Test
+	public void testDirectionSet() {
+		final Loco loco2 = new Loco(2, mockedConn);
+		loco.addRemoteLoco(loco2);
+		loco.setSpeed(100);
+		loco2.setSpeed(100);
+		Assert.assertEquals(100, loco.getSpeed());
+		Assert.assertEquals(100, loco2.getSpeed());
+		Assert.assertEquals(128, loco.getDirection());
+		Assert.assertEquals(128, loco2.getDirection());
+		loco.setDirection(128);
+		Assert.assertEquals(128, loco.getDirection());
+		Assert.assertEquals(128, loco2.getDirection());
+		loco2.setDirection(0);
+		Assert.assertEquals(128, loco.getDirection());
+		Assert.assertEquals(0, loco2.getDirection());
+	}
+
+	@Test
 	public void testSelfCannotBeAddedAsRemote() {
 		loco.addRemoteLoco(loco);
 		Assert.assertFalse(loco.getRemoteLocos().contains(loco));
