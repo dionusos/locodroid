@@ -21,7 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 public class LocoListActivity extends Activity implements OnRefreshListener {
@@ -62,18 +62,18 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLocoList);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
-				Color.GREEN, Color.BLUE);
+		        Color.GREEN, Color.BLUE);
 		final Context _this = this;
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(final AdapterView<?> parent,
-					final View view, final int position, final long id) {
+			        final View view, final int position, final long id) {
 				final Loco loco = ((Loco) ((LocoListAdapter) listView
-						.getAdapter()).getItem(position));
+				        .getAdapter()).getItem(position));
 				final Intent intent = new Intent(_this,
-						TrainDriverActivity.class);
+				        TrainDriverActivity.class);
 				intent.putExtra("hostAddress", controlCenterAddress);
 				intent.putExtra("locoAddress", loco.getAddress());
 				intent.putExtra("locoName", loco.getName());
@@ -81,25 +81,25 @@ public class LocoListActivity extends Activity implements OnRefreshListener {
 
 			}
 		});
-		((Button) findViewById(R.id.addLocoButton))
-		.setOnClickListener(new OnClickListener() {
+		((ImageButton) findViewById(R.id.addLocoButton))
+		        .setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(final View v) {
-				// TODO Auto-generated method stub
-				final Intent intent = new Intent(_this,
-						AddNewLocoActivity.class);
-				intent.putExtra("hostAddress", controlCenterAddress);
-				intent.putExtra("loco-type", "new-loco");
-				startActivity(intent);
-			}
-		});
+			        @Override
+			        public void onClick(final View v) {
+				        // TODO Auto-generated method stub
+				        final Intent intent = new Intent(_this,
+				                AddNewLocoActivity.class);
+				        intent.putExtra("hostAddress", controlCenterAddress);
+				        intent.putExtra("loco-type", "new-loco");
+				        startActivity(intent);
+			        }
+		        });
 
 		listView.setAdapter(adapter);
 		registerForContextMenu(listView);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-				new IntentFilter("LOCO_LIST_RECEIVED"));
+		        new IntentFilter("LOCO_LIST_RECEIVED"));
 
 		final Intent i = new Intent("GET_LOCO_LIST");
 		i.putExtra("job", "getLocoList");
