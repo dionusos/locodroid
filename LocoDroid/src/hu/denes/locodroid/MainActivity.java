@@ -49,26 +49,26 @@ public class MainActivity extends Activity implements OnRefreshListener {
 		setContentView(R.layout.list_command_center);
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-		        new IntentFilter("NETWORK-DISCOVERED"));
+				new IntentFilter("NETWORK-DISCOVERED"));
 
 		listView = (ListView) findViewById(R.id.list);
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshCommandCenterList);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
-		        Color.GREEN, Color.BLUE);
-		swipeRefreshLayout.setRefreshing(true);
+				Color.GREEN, Color.BLUE);
+
 		final Context _this = this;
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(final AdapterView<?> parent,
-			        final View view, final int position, final long id) {
+					final View view, final int position, final long id) {
 				final String hostAddress = ((String) ((ControlCenterAdapter) listView
-				        .getAdapter()).getItem(position));
+						.getAdapter()).getItem(position));
 				// create service
 				final Intent i = new Intent(_this.getApplicationContext(),
-				        NetworkCommunicationService.class);
+						NetworkCommunicationService.class);
 				i.putExtra("serverAddress", hostAddress);
 				startService(i);
 
@@ -137,11 +137,11 @@ public class MainActivity extends Activity implements OnRefreshListener {
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-		        .getMenuInfo();
+				.getMenuInfo();
 		final int menuItemIndex = item.getItemId();
 		if (menuItemIndex == 0) {
 			final String hostAddress = ((String) ((ControlCenterAdapter) listView
-			        .getAdapter()).getItem(info.position));
+					.getAdapter()).getItem(info.position));
 
 			final Intent intent = new Intent(this, LocoListActivity.class);
 			intent.putExtra("hostAddress", hostAddress);

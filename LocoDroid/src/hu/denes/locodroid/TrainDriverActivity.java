@@ -107,7 +107,7 @@ public class TrainDriverActivity extends Activity implements OnRefreshListener {
 
 		functionSwitchMapByNumber = new HashMap<String, Switch>();
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshTrainDriver);
-		swipeRefreshLayout.setDistanceToTriggerSync(500);
+		swipeRefreshLayout.setDistanceToTriggerSync(400);
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW,
 		        Color.GREEN, Color.BLUE);
