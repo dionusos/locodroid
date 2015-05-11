@@ -2,6 +2,8 @@ package hu.denes.command_center;
 
 import hu.denes.command_center.client_connection.Loco;
 import hu.denes.command_center.client_connection.NetworkConnection;
+import hu.denes.command_center.roco_connection.DummyConnection;
+import hu.denes.command_center.roco_connection.RailwayConnection;
 import hu.denes.command_center.roco_connection.XpressNetRailwayConnection;
 import hu.denes.command_center.storage.Storage;
 
@@ -24,8 +26,14 @@ public class CommandCenter {
 		final int udpPort = Integer.parseInt(args[1]);
 		final String serialTerminalName = args[2];
 
-		final XpressNetRailwayConnection railwayConnection = new XpressNetRailwayConnection(
-		        serialTerminalName);
+		RailwayConnection railwayConnection;
+		if ("dummy".equals(serialTerminalName)) {
+			railwayConnection = new DummyConnection();
+		} else {
+			railwayConnection = new XpressNetRailwayConnection(
+					serialTerminalName);
+		}
+
 		final Storage storage = new Storage(railwayConnection);
 		storage.initDB();
 		System.out.println(storage.getLocoAddresses());

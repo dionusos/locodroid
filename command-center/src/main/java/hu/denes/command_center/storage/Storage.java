@@ -16,8 +16,6 @@ import javax.persistence.Query;
 public class Storage {
 
 	private static final String PERSISTENCE_UNIT_NAME = "LocoDroid";
-	private static final String DBASE_DIRECTORY = System
-			.getProperty("user.dir");
 
 	private EntityManagerFactory factory;
 	private EntityManager em;
@@ -34,10 +32,6 @@ public class Storage {
 			em.remove(getLocoByAddress(address));
 			em.getTransaction().commit();
 		}
-	}
-
-	private static String getDir() {
-		return DBASE_DIRECTORY;
 	}
 
 	private static String getUnit() {
@@ -70,7 +64,7 @@ public class Storage {
 
 	public Loco getLocoByAddress(final Integer address) {
 		final Query q = em
-				.createQuery("SELECT l FROM Loco l WHERE l.address = :address");
+		        .createQuery("SELECT l FROM Loco l WHERE l.address = :address");
 		q.setParameter("address", address);
 		Loco l;
 		try {
@@ -88,7 +82,7 @@ public class Storage {
 	public boolean isLocoExistByAddress(final Integer address) {
 		try {
 			final Query q = em
-					.createQuery("SELECT l FROM Loco l WHERE l.address = :address");
+			        .createQuery("SELECT l FROM Loco l WHERE l.address = :address");
 			q.setParameter("address", address);
 
 			final Loco l = (Loco) q.getSingleResult();

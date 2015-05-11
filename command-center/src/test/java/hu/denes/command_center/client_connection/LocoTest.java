@@ -25,6 +25,11 @@ public class LocoTest {
 	}
 
 	@Test
+	public void testLoco() {
+		final Loco loco = new Loco();
+	}
+
+	@Test
 	public void testSpeedIsSetCorrectly() {
 		loco.setSpeed(10);
 		Mockito.verify(mockedConn).setSpeed(1, 10 + 128, loco.getMaxSpeed());
