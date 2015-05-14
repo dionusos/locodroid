@@ -22,7 +22,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class MainActivity extends Activity implements OnRefreshListener {
+public class CommandCenterListActivity extends Activity implements OnRefreshListener {
 
 	InetAddress commandCenterAddress;
 	int currentLocoAddress = 0;
